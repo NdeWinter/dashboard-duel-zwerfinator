@@ -1,0 +1,1156 @@
+{
+  "compatibilityLevel": 1567,
+  "model": {
+    "annotations": [
+      {
+        "name": "__PBI_TimeIntelligenceEnabled",
+        "value": "0"
+      },
+      {
+        "name": "PBIDesktopVersion",
+        "value": "2.121.942.0 (23.09)"
+      },
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"Data\",\"Afstanden\",\"Gewichten\",\"Type\",\"Spec\",\"Groep\",\"Grondstof\",\"Merken\",\"Merken Toevoeging\",\"Merken Ontbrekend\",\"Measurements\"]"
+      },
+      {
+        "name": "PBI_ProTooling",
+        "value": "[\"DevMode\"]"
+      }
+    ],
+    "culture": "en-US",
+    "cultures": [
+      {
+        "name": "en-US",
+        "linguisticMetadata": {
+          "content": {
+            "DynamicImprovement": "HighConfidence",
+            "Language": "en-US",
+            "Version": "1.0.0"
+          },
+          "contentType": "json"
+        }
+      }
+    ],
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "expressions": [
+      {
+        "name": "Merken Toevoeging",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"lZFNboQwDIWvgljPJaYcoJvZoVk4iQE3P65MmNH09E1CpVHVQXI3+D37exCHcewh0BdifzoW19PYmy0Ex3Np5gWf5rJg9/bS1ZAFZzZ5lMlTDbvqzg7i+sfvqeQeE9jMP1G1bWm2LGS5zqrkQ7nTHluvlYEtdAMH+KUr50h8adZyK1/EZIRR12nxLXlKjtOW687/sHtaBNrgVa3EBJFCvY73ZNBjcgeysRvlSWjV0TOEgKk+dfxSNo86lOIN55lQR3/A3QggeBTl0VuiBXR8BCFcM4b2/zUBFsyZlLDYha2OTWQ9BnbISRf45GhAuWYGyaB57/Ub\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Sleutel_Merk = _t, Label = _t, Bedrijf = _t, Merk = _t]),",
+          "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Sleutel_Merk\", type text}, {\"Label\", type text}, {\"Bedrijf\", type text}, {\"Merk\", type text}})",
+          "in",
+          "    #\"Changed Type\""
+        ],
+        "kind": "m",
+        "lineageTag": "e340a85a-9a82-41c7-82b8-dc643a661494"
+      },
+      {
+        "name": "Merken Ontbrekend",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+          "    Data_Sheet = Source{[Item=\"Data\",Kind=\"Sheet\"]}[Data],",
+          "    #\"Promoted Headers\" = Table.PromoteHeaders(Data_Sheet, [PromoteAllScalars=true]),",
+          "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Gebied\", type text}, {\"Run\", Int64.Type}, {\"Datum\", type date}, {\"Tijd\", type time}, {\"latitude\", type number}, {\"Longitude\", type number}, {\"Merk\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Sleutel_Jaar_Wijk_Run\", type text}, {\"Sleutel_Soort_Grondstof_Type\", type text}}),",
+          "    #\"Removed Other Columns1\" = Table.SelectColumns(#\"Changed Type\",{\"Merk\"}),",
+          "    #\"Kolom Merk naar Sleutel_Merk\" = Table.RenameColumns(#\"Removed Other Columns1\",{{\"Merk\", \"Sleutel_Merk\"}}),",
+          "    #\"Lowercased Sleutel_Merk\" = Table.TransformColumns(#\"Kolom Merk naar Sleutel_Merk\",{{\"Sleutel_Merk\", Text.Lower, type text}}),",
+          "    #\"Merged Queries\" = Table.NestedJoin(#\"Lowercased Sleutel_Merk\", {\"Sleutel_Merk\"}, Merken, {\"Sleutel_Merk\"}, \"Merken\", JoinKind.LeftOuter),",
+          "    #\"Expanded Merken\" = Table.ExpandTableColumn(#\"Merged Queries\", \"Merken\", {\"Label\"}, {\"Label\"}),",
+          "    #\"Filtered Rows\" = Table.SelectRows(#\"Expanded Merken\", each ([Label] = null)),",
+          "    #\"Removed Duplicates\" = Table.Distinct(#\"Filtered Rows\", {\"Sleutel_Merk\"}),",
+          "    #\"Removed Columns\" = Table.RemoveColumns(#\"Removed Duplicates\",{\"Label\"}),",
+          "    #\"Sorted Rows\" = Table.Sort(#\"Removed Columns\",{{\"Sleutel_Merk\", Order.Ascending}}),",
+          "    #\"Added Conditional Column\" = Table.AddColumn(#\"Sorted Rows\", \"Label\", each if [Sleutel_Merk] = \"alizee\" then \"alizee\" else if [Sleutel_Merk] = \"bulldog\" then \"thebulldog\" else if [Sleutel_Merk] = \"cadbury\" then \"cadbury\" else if [Sleutel_Merk] = \"candyfactory\" then \"candyfactory\" else if [Sleutel_Merk] = \"cocorico\" then \"cocoroco\" else if [Sleutel_Merk] = \"coke\" then \"cocacola\" else if [Sleutel_Merk] = \"dijklander\" then \"dijklander\" else if [Sleutel_Merk] = \"dirk\" then \"dirkvandenbroek\" else if [Sleutel_Merk] = \"dunkindonuts\" then \"dunkindonuts\" else if [Sleutel_Merk] = \"durra\" then \"durra\" else \"Onbekend\"),",
+          "    Custom1 = Table.AddColumn(#\"Added Conditional Column\", \"Bedrijf\", each if [Sleutel_Merk] = \"alizee\" then \"alizee\" else if [Sleutel_Merk] = \"bulldog\" then \"thebulldog\" else if [Sleutel_Merk] = \"cadbury\" then \"cadbury\" else if [Sleutel_Merk] = \"candyfactory\" then \"candyfactory\" else if [Sleutel_Merk] = \"cocorico\" then \"cocoroco\" else if [Sleutel_Merk] = \"coke\" then \"cocacola\" else if [Sleutel_Merk] = \"dijklander\" then \"dijklander\" else if [Sleutel_Merk] = \"dirk\" then \"dirkvandenbroek\" else if [Sleutel_Merk] = \"dunkindonuts\" then \"dunkindonuts\" else if [Sleutel_Merk] = \"durra\" then \"durra\" else \"Onbekend\"),",
+          "    Custom2 = Table.AddColumn(Custom1 , \"Merk\", each if [Sleutel_Merk] = \"alizee\" then \"alizee\" else if [Sleutel_Merk] = \"bulldog\" then \"thebulldog\" else if [Sleutel_Merk] = \"cadbury\" then \"cadbury\" else if [Sleutel_Merk] = \"candyfactory\" then \"candyfactory\" else if [Sleutel_Merk] = \"cocorico\" then \"cocoroco\" else if [Sleutel_Merk] = \"coke\" then \"cocacola\" else if [Sleutel_Merk] = \"dijklander\" then \"dijklander\" else if [Sleutel_Merk] = \"dirk\" then \"dirkvandenbroek\" else if [Sleutel_Merk] = \"dunkindonuts\" then \"dunkindonuts\" else if [Sleutel_Merk] = \"durra\" then \"durra\" else \"Onbekend\")",
+          "in",
+          "    Custom2"
+        ],
+        "kind": "m",
+        "lineageTag": "b56fd81a-b182-4fd9-85f6-492173c9f266"
+      }
+    ],
+    "queryGroups": [
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "folder": "Facts"
+      }
+    ],
+    "relationships": [
+      {
+        "name": "55d75b50-2997-495d-acc2-8a908a9e0597",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "one",
+        "fromColumn": "Sleutel_Soort_Grondstof",
+        "fromTable": "Spec",
+        "toColumn": "Sleutel_Soort_Grondstof",
+        "toTable": "Grondstof"
+      },
+      {
+        "name": "c4cfb751-df09-4462-a91b-4e1b07295564",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "one",
+        "fromColumn": "Sleutel_Soort_Grondstof",
+        "fromTable": "Groep",
+        "toColumn": "Sleutel_Soort_Grondstof",
+        "toTable": "Grondstof"
+      },
+      {
+        "name": "942f9715-e875-4d14-91ac-b6862e3f16aa",
+        "fromColumn": "Sleutel_Soort_Grondstof",
+        "fromTable": "Data",
+        "toColumn": "Sleutel_Soort_Grondstof",
+        "toTable": "Grondstof"
+      },
+      {
+        "name": "531054ed-dc49-455c-98b0-90d585f4bd1c",
+        "fromColumn": "Sleutel_Soort_Grondstof_Type",
+        "fromTable": "Data",
+        "toColumn": "Sleutel_Soort_Grondstof_Type",
+        "toTable": "Type"
+      },
+      {
+        "name": "507a651a-588c-4c64-8f0c-f54a090069ff",
+        "fromColumn": "Sleutel_Merk",
+        "fromTable": "Data",
+        "toColumn": "Sleutel_Merk",
+        "toTable": "Merken"
+      },
+      {
+        "name": "a4d64840-ada4-410b-97c3-0f9eecef77e4",
+        "fromColumn": "Sleutel_Jaar_Wijk_Run",
+        "fromTable": "Data",
+        "toColumn": "Sleutel_Jaar_Wijk_Run",
+        "toTable": "Afstanden"
+      },
+      {
+        "name": "f7afb11b-73c8-48b0-85b5-cfc4eb7e8c7b",
+        "fromColumn": "Datum",
+        "fromTable": "Data",
+        "toColumn": "Datum",
+        "toTable": "Kalender"
+      }
+    ],
+    "sourceQueryCulture": "nl-NL",
+    "tables": [
+      {
+        "name": "Data",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Datum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "isHidden": true,
+            "lineageTag": "e0e100dd-ce45-47a3-9f94-26498ffe88e4",
+            "sourceColumn": "Datum",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Tijd",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Time"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Time",
+            "lineageTag": "5289b337-90e1-42fd-a81d-8634eec244b8",
+            "sourceColumn": "Tijd",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "latitude",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataCategory": "Latitude",
+            "dataType": "double",
+            "lineageTag": "4fa0ca17-1d68-4cdd-8373-a964ea9d6d68",
+            "sourceColumn": "latitude",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Longitude",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              },
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "dataCategory": "Longitude",
+            "dataType": "double",
+            "lineageTag": "9cf93ecf-d83e-4e2c-9b23-5700d15574b2",
+            "sourceColumn": "Longitude",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Merk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "92a6e459-b539-4091-90b7-f2820cf423f8",
+            "sourceColumn": "Sleutel_Merk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Soort_Grondstof",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "7416d4c5-12b0-4b96-8ff4-e8f8aa294628",
+            "sourceColumn": "Sleutel_Soort_Grondstof",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Jaar_Wijk_Run",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "35ee1a30-19d5-4904-bccf-a60e56a340ee",
+            "sourceColumn": "Sleutel_Jaar_Wijk_Run",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Soort_Grondstof_Type",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "7e8f0068-f244-4e70-b9fc-a797a9afc99c",
+            "sourceColumn": "Sleutel_Soort_Grondstof_Type",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "731b6753-12ec-473e-aa2f-32189044222e",
+        "partitions": [
+          {
+            "name": "Data",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Data_Sheet = Source{[Item=\"Data\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Data_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Gebied\", type text}, {\"Run\", Int64.Type}, {\"Datum\", type date}, {\"Tijd\", type time}, {\"latitude\", type number}, {\"Longitude\", type number}, {\"Merk\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Sleutel_Jaar_Wijk_Run\", type text}, {\"Sleutel_Soort_Grondstof_Type\", type text}}),",
+                "    #\"Dimensie Kolommen verwijderd\" = Table.RemoveColumns(#\"Changed Type\",{\"Soort\", \"Grondstof\", \"Type\", \"Run\", \"Jaar\"}),",
+                "    #\"Kolom Merk naar Sleutel_Merk\" = Table.RenameColumns(#\"Dimensie Kolommen verwijderd\",{{\"Merk\", \"Sleutel_Merk\"}}),",
+                "    #\"Lowercased Sleutel_Merk\" = Table.TransformColumns(#\"Kolom Merk naar Sleutel_Merk\",{{\"Sleutel_Merk\", Text.Lower, type text}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Lowercased Sleutel_Merk\",{\"Gebied\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Afstanden",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Sleutel_Jaar_Wijk_Run",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d2fda42d-d309-4ab0-baf1-2978080709aa",
+            "sourceColumn": "Sleutel_Jaar_Wijk_Run",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Jaar",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "1daa486b-66de-4b32-8019-7efda1c38dd4",
+            "sourceColumn": "Jaar",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Gebied",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataCategory": "Place",
+            "dataType": "string",
+            "lineageTag": "9d932e0a-b00d-43df-9bb5-4aa0fd389668",
+            "sourceColumn": "Gebied",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Run",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "2834d982-b6e4-44d8-9369-1c0b3eb96b1a",
+            "sourceColumn": "Run",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Afstand",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "eb13e87c-8615-42bf-ac0c-737c19256164",
+            "sourceColumn": "Afstand",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "b736c233-ffe1-4129-a624-c3a35aaec7f4",
+        "partitions": [
+          {
+            "name": "Afstanden",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Afstanden_Sheet = Source{[Item=\"Afstanden\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Afstanden_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Gebied\", type text}, {\"Run\", Int64.Type}, {\"Afstand\", Int64.Type}, {\"Sleutel_Jaar_Wijk_Run\", type text}, {\"Aantal rijen\", Int64.Type}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Aantal rijen\"}),",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Columns\",{\"Sleutel_Jaar_Wijk_Run\", \"Jaar\", \"Gebied\", \"Run\", \"Afstand\"})",
+                "in",
+                "    #\"Reordered Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Gewichten",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Jaar",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "69336da8-5cab-48cf-9a59-acb504852890",
+            "sourceColumn": "Jaar",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Wijk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b4606d0c-22f4-4e99-bf56-fd63e35a02ba",
+            "sourceColumn": "Wijk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Soort",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2dd36c18-af60-4044-8027-0a10a50ddc25",
+            "sourceColumn": "Soort",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Gewicht",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "bfd3a0f9-0fc4-4e82-b2f7-1be7f1441b32",
+            "sourceColumn": "Gewicht",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Tussengroep",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "44563be2-8de6-4120-89eb-278f189e95ff",
+            "sourceColumn": "Tussengroep",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Hoofdgroep",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ab8a7a8a-5420-4286-a62e-ea30ebce7869",
+            "sourceColumn": "Hoofdgroep",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "39f59d46-a316-4d5d-943a-a6d33fa1058b",
+        "partitions": [
+          {
+            "name": "Gewichten",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Gewichten_Sheet = Source{[Item=\"Gewichten\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Gewichten_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Wijk\", type text}, {\"Soort\", type text}, {\"Gewicht\", Int64.Type}, {\"Tussengroep\", type text}, {\"Hoofdgroep\", type text}})",
+                "in",
+                "    #\"Changed Type\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Type",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Sleutel_Soort_Grondstof_Type",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "1652cce2-e5d4-46ce-9dfe-7f261241f9bf",
+            "sourceColumn": "Sleutel_Soort_Grondstof_Type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Type",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "cb323454-dcb7-49e5-996d-f202aa60d0e8",
+            "sourceColumn": "Type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Type1",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b81091c8-0fe9-4d8a-85f2-07a708e012fd",
+            "sourceColumn": "Type1",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Type2",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ad57cf52-e092-4b98-a708-d7f38b974827",
+            "sourceColumn": "Type2",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "d3f6ce8f-c93f-483e-8c81-3349437c30f6",
+        "partitions": [
+          {
+            "name": "Type",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Type_Sheet = Source{[Item=\"Type\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Type_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Type\", type text}, {\"Type1\", type text}, {\"Type2\", type text}, {\"Sleutel_Soort_Grondstof_Type\", type text}, {\"Aantal rijen\", Int64.Type}}),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Changed Type\",{\"Sleutel_Soort_Grondstof_Type\", \"Type\", \"Type1\", \"Type2\"})",
+                "in",
+                "    #\"Removed Other Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Spec",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Sleutel_Soort_Grondstof",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "2647d10d-5315-44c3-b6fb-4a8dd7bfeea0",
+            "sourceColumn": "Sleutel_Soort_Grondstof",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Specificatie",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "ebbf8019-c0ae-4933-82f6-8f6ab7647d99",
+            "sourceColumn": "Specificatie",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "fee802cb-0a00-43f3-84f5-8739a0ab0ea7",
+        "partitions": [
+          {
+            "name": "Spec",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Spec_Sheet = Source{[Item=\"Spec\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Spec_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Specificatie\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Aantal rijen\", Int64.Type}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Soort\", \"Grondstof\", \"Aantal rijen\"}),",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Columns\",{\"Sleutel_Soort_Grondstof\", \"Specificatie\"})",
+                "in",
+                "    #\"Reordered Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Groep",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Sleutel_Soort_Grondstof",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "fef9b63a-7442-401c-9b83-9fc55403d89f",
+            "sourceColumn": "Sleutel_Soort_Grondstof",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Supergroep",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "bda76a01-748a-408c-acb5-8d6cb37790b5",
+            "sourceColumn": "Supergroep",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Groep",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "b98e4b54-6811-435a-9e7e-4f0413f13e35",
+            "sourceColumn": "Groep",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "44143e30-e820-41ed-876c-7a7912f30ec1",
+        "partitions": [
+          {
+            "name": "Groep",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Groep_Sheet = Source{[Item=\"Groep\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Groep_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Groep\", type text}, {\"Supergroep\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Aantal rijen\", Int64.Type}}),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Changed Type\",{\"Sleutel_Soort_Grondstof\", \"Supergroep\", \"Groep\"})",
+                "in",
+                "    #\"Removed Other Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Grondstof",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Sleutel_Soort_Grondstof",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "c2aaed1e-c6e0-4934-afa5-fd3f5e996776",
+            "sourceColumn": "Sleutel_Soort_Grondstof",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Grondstof",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d18326af-3f71-46a0-8bf9-1cb0c15c4a84",
+            "sourceColumn": "Grondstof",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Soort",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "f1de579e-df0f-42ba-858a-747a3c520696",
+            "sourceColumn": "Soort",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "72840475-cca6-43b7-9ae5-562c06c14225",
+        "partitions": [
+          {
+            "name": "Grondstof",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Grondstof_Sheet = Source{[Item=\"Grondstof\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Grondstof_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Groep\", type text}, {\"Hoofdgroep\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Aantal rijen\", Int64.Type}}),",
+                "    #\"Filter Sleutel  != Null\" = Table.SelectRows(#\"Changed Type\", each ([Sleutel_Soort_Grondstof] <> null)),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Filter Sleutel  != Null\",{\"Sleutel_Soort_Grondstof\", \"Grondstof\", \"Soort\"})",
+                "in",
+                "    #\"Removed Other Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Merken",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Sleutel_Merk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "3f8921bd-c31e-4141-87be-5c1f4b81f35e",
+            "sourceColumn": "Sleutel_Merk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Bedrijf",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "bb67d94c-b909-4f08-95b2-5c580ce874b0",
+            "sourceColumn": "Bedrijf",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Merk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "26d0ba00-1a1a-4f0c-990a-f9d8752f3f1a",
+            "sourceColumn": "Merk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Label",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "89b10db8-12bb-4549-a10b-a142e69c1831",
+            "sourceColumn": "Label",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "e11c9b6a-eb97-407d-9937-62252d806e05",
+        "partitions": [
+          {
+            "name": "Merken",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Merken_Sheet = Source{[Item=\"Merken\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Merken_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Label\", type text}, {\"Merk\", type text}, {\"Bedrijf\", type text}, {\"Aantal rijen\", Int64.Type}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Aantal rijen\"}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Removed Columns\", each ([Merk] <> \"Chefselect\" and [Merk] <> \"Mrfreeze\")),",
+                "    #\"Duplicated Column\" = Table.DuplicateColumn(#\"Filtered Rows\", \"Merk\", \"Sleutel_Merk\"),",
+                "    #\"Lowercased Text\" = Table.TransformColumns(#\"Duplicated Column\",{{\"Sleutel_Merk\", Text.Lower, type text}}),",
+                "    #\"Trimmed Text\" = Table.TransformColumns(#\"Lowercased Text\",{{\"Sleutel_Merk\", Text.Trim, type text}}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Trimmed Text\",\" \",\"\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
+                "    #\"Replaced Value1\" = Table.ReplaceValue(#\"Replaced Value\",\"é\",\"e\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
+                "    #\"Replaced Value2\" = Table.ReplaceValue(#\"Replaced Value1\",\"'\",\"\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
+                "    #\"Replaced Value4\" = Table.ReplaceValue(#\"Replaced Value2\",\".\",\"\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
+                "    #\"Replaced Value3\" = Table.ReplaceValue(#\"Replaced Value4\",\"ü\",\"u\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
+                "    #\"Replaced Value5\" = Table.ReplaceValue(#\"Replaced Value3\",\"-\",\"\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
+                "    #\"Appended Query\" = Table.Combine({#\"Replaced Value5\", #\"Merken Toevoeging\"}),",
+                "    #\"Sorted Rows\" = Table.Sort(#\"Appended Query\",{{\"Merk\", Order.Ascending}}),",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Sorted Rows\",{\"Sleutel_Merk\", \"Bedrijf\", \"Merk\", \"Label\"})",
+                "in",
+                "    #\"Reordered Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Kalender",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "10f09339358c4c6195b0b0dd115496fb"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Datum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "General Date",
+            "isDataTypeInferred": true,
+            "isKey": true,
+            "isNameInferred": false,
+            "lineageTag": "f90d6023-b9e2-4810-8a94-06eadbee3a20",
+            "sourceColumn": "[Date]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Jaar",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "de945696-8890-40f4-88e6-4ce34fa1866a",
+            "sourceColumn": "[Jaar]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Maand",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "7471b184-ce7b-41f3-9a2e-e1218382b5d2",
+            "sortByColumn": "Maand Nummer",
+            "sourceColumn": "[Maand]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Maand Nummer",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "61e36a34-36d1-44df-8aed-e8f6e6694f3f",
+            "sourceColumn": "[Maand Nummer]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "dataCategory": "Time",
+        "lineageTag": "9f337449-4ac4-4989-9968-044d3cc79c44",
+        "partitions": [
+          {
+            "name": "Kalender",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "",
+                "VAR MinDate = DATE( YEAR( MIN(Data[Datum])),1,1)",
+                "VAR MaxDate = LASTDATE(Data[Datum])",
+                "",
+                "RETURN",
+                "ADDCOLUMNS(",
+                "    FILTER(",
+                "        CALENDARAUTO(),",
+                "        [Date] >= MinDate &&",
+                "        [Date] <= MaxDate",
+                "    ),",
+                "    \"Jaar\", YEAR([date]),",
+                "    \"Maand Nummer\", MONTH([Date]),",
+                "    \"Maand\", FORMAT([Date], \"mmm\")",
+                "",
+                ")"
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Measurements",
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "changedProperties": [
+          {
+            "property": "Name"
+          }
+        ],
+        "lineageTag": "113f8e3a-fce4-471b-b1ab-e2f54475ef65",
+        "measures": [
+          {
+            "name": "Aantal Verzamelt",
+            "expression": "COUNTROWS(Data)",
+            "formatString": "0",
+            "lineageTag": "bf1dde1b-504b-4db8-b7ba-7aed0cb5db98"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Measurements",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Column1\", type text}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Column1\"})",
+                "in",
+                "    #\"Removed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

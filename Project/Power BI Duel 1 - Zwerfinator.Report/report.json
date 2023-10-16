@@ -1,0 +1,174 @@
+{
+  "config": "{\"version\":\"5.47\",\"themeCollection\":{\"baseTheme\":{\"name\":\"CY23SU08\",\"version\":\"5.48\",\"type\":2}},\"activeSectionIndex\":2,\"defaultDrillFilterOtherVisuals\":true,\"slowDataSourceSettings\":{\"isCrossHighlightingDisabled\":false,\"isSlicerSelectionsButtonEnabled\":false,\"isFilterSelectionsButtonEnabled\":false,\"isFieldWellButtonEnabled\":false,\"isApplyAllButtonEnabled\":false},\"linguisticSchemaSyncVersion\":2,\"settings\":{\"useNewFilterPaneExperience\":true,\"allowChangeFilterTypes\":true,\"useStylableVisualContainerHeader\":true,\"queryLimitOption\":6,\"useEnhancedTooltips\":true,\"exportDataMode\":1,\"useDefaultAggregateDisplayName\":true},\"objects\":{\"section\":[{\"properties\":{\"verticalAlignment\":{\"expr\":{\"Literal\":{\"Value\":\"'Top'\"}}}}}],\"outspacePane\":[{\"properties\":{\"expanded\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}",
+  "layoutOptimization": 0,
+  "resourcePackages": [
+    {
+      "resourcePackage": {
+        "disabled": false,
+        "items": [
+          {
+            "name": "CY23SU08",
+            "path": "BaseThemes/CY23SU08.json",
+            "type": 202
+          }
+        ],
+        "name": "SharedResources",
+        "type": 2
+      }
+    }
+  ],
+  "sections": [
+    {
+      "config": "{}",
+      "displayName": "Page 1",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection",
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"0a68c8ca0d933af506e4\",\"layouts\":[{\"id\":0,\"position\":{\"x\":28.051948051948052,\"y\":31.79220779220779,\"z\":0,\"width\":200.72727272727272,\"height\":92.25974025974025,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Kalender.Jaar\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"},\"Name\":\"Kalender.Jaar\",\"NativeReferenceName\":\"Jaar\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"numericStart\":{\"expr\":{\"Literal\":{\"Value\":\"2020D\"}}},\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"2019L\"}}]]}}}]}}}}],\"slider\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"selection\":[{\"properties\":{\"strictSingleSelect\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 92.26,
+          "width": 200.73,
+          "x": 28.05,
+          "y": 31.79,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"3305f39cfd937e85f2c7\",\"layouts\":[{\"id\":0,\"position\":{\"x\":9.974025974025974,\"y\":69.1948051948052,\"z\":1000,\"width\":965.6103896103896,\"height\":532.9870129870129,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"map\",\"projections\":{\"Size\":[{\"queryRef\":\"Data.Verzamelt\"}],\"Y\":[{\"queryRef\":\"Data.latitude\"}],\"X\":[{\"queryRef\":\"Data.Longitude\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"d\",\"Entity\":\"Data\",\"Type\":0},{\"Name\":\"m\",\"Entity\":\"Measurements\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Aantal Verzamelt\"},\"Name\":\"Data.Verzamelt\",\"NativeReferenceName\":\"Verzamelt\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"latitude\"},\"Name\":\"Data.latitude\",\"NativeReferenceName\":\"latitude\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"d\"}},\"Property\":\"Longitude\"},\"Name\":\"Data.Longitude\",\"NativeReferenceName\":\"Longitude\"}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true,\"objects\":{\"dataPoint\":[{\"properties\":{\"fillRule\":{\"linearGradient2\":{\"min\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'minColor'\"}}}},\"max\":{\"color\":{\"expr\":{\"Literal\":{\"Value\":\"'maxColor'\"}}}},\"nullColoringStrategy\":{\"strategy\":{\"expr\":{\"Literal\":{\"Value\":\"'asZero'\"}}}}}}}}],\"bubbles\":[{\"properties\":{\"bubbleSize\":{\"expr\":{\"Literal\":{\"Value\":\"-27L\"}}}}}],\"mapStyles\":[{\"properties\":{\"mapTheme\":{\"expr\":{\"Literal\":{\"Value\":\"'canvasLight'\"}}},\"showLabels\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}],\"mapControls\":[{\"properties\":{\"showLassoButton\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}],\"heatMap\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 532.99,
+          "width": 965.61,
+          "x": 9.97,
+          "y": 69.19,
+          "z": 1000.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Page 3",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection69ba921008d7a92b6f56",
+      "ordinal": 2,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"080287abf4759d14217a\",\"layouts\":[{\"id\":0,\"position\":{\"x\":140.8831121271307,\"y\":26.389597706980517,\"z\":2000,\"width\":330.38961038961037,\"height\":140.25974025974025,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"KPI:\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"Aantal verzamelde items\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"vs Last Year                      \"}]}]}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"radius\":{\"expr\":{\"Literal\":{\"Value\":\"27D\"}}},\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 140.26,
+          "width": 330.39,
+          "x": 140.88,
+          "y": 26.39,
+          "z": 2000.00
+        },
+        {
+          "config": "{\"name\":\"2de5aaf0ee0717da8acc\",\"layouts\":[{\"id\":0,\"position\":{\"x\":527.3766186206371,\"y\":25.142844460227273,\"z\":1000,\"width\":336,\"height\":140.25974025974025,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"KPI:\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"Totaal gewicht verzameld\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"vs Last Year                      \"}]}]}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"radius\":{\"expr\":{\"Literal\":{\"Value\":\"27D\"}}},\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 140.26,
+          "width": 336.00,
+          "x": 527.38,
+          "y": 25.14,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"3232f6ec135367de3d49\",\"layouts\":[{\"id\":0,\"position\":{\"x\":691.3246753246752,\"y\":198.85714285714286,\"z\":4000,\"width\":546.077922077922,\"height\":504.3116883116883,\"tabOrder\":3000}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"Map met heatmap en data per gebied,            \",\"textStyle\":{\"fontFamily\":\"inherit\",\"fontSize\":\"inherit\"}}]}]}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"radius\":{\"expr\":{\"Literal\":{\"Value\":\"27D\"}}},\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 504.31,
+          "width": 546.08,
+          "x": 691.32,
+          "y": 198.86,
+          "z": 4000.00
+        },
+        {
+          "config": "{\"name\":\"6404971d99b1e05bee64\",\"layouts\":[{\"id\":0,\"position\":{\"x\":928.207787451806,\"y\":25.142844460227273,\"z\":3000,\"width\":309.19480519480516,\"height\":140.25974025974025,\"tabOrder\":2000}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"KPI:\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"Afvaldichtheid\"}]},{\"textRuns\":[{\"value\":\"\"}]},{\"textRuns\":[{\"value\":\"vs Last Year                      \"}]}]}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"radius\":{\"expr\":{\"Literal\":{\"Value\":\"27D\"}}},\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 140.26,
+          "width": 309.19,
+          "x": 928.21,
+          "y": 25.14,
+          "z": 3000.00
+        },
+        {
+          "config": "{\"name\":\"dc17826700916d8acee2\",\"layouts\":[{\"id\":0,\"position\":{\"x\":142.1298701298701,\"y\":175.7922077922078,\"z\":5000,\"width\":327.8961038961039,\"height\":45.506493506493506,\"tabOrder\":5000}}],\"singleVisual\":{\"visualType\":\"textbox\",\"drillFilterOtherVisuals\":true,\"objects\":{\"general\":[{\"properties\":{\"paragraphs\":[{\"textRuns\":[{\"value\":\"Selectiepaneel categorie\"}]}]}}]},\"vcObjects\":{\"background\":[{\"properties\":{\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}],\"border\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}},\"radius\":{\"expr\":{\"Literal\":{\"Value\":\"27D\"}}},\"color\":{\"solid\":{\"color\":{\"expr\":{\"ThemeDataColor\":{\"ColorId\":2,\"Percent\":0.6}}}}}}}]}}}",
+          "filters": "[]",
+          "height": 45.51,
+          "width": 327.90,
+          "x": 142.13,
+          "y": 175.79,
+          "z": 5000.00
+        },
+        {
+          "config": "{\"name\":\"f2ba14c61a83611f3358\",\"layouts\":[{\"id\":0,\"position\":{\"x\":-0.000004755986201298701,\"y\":25.142844460227273,\"z\":0,\"width\":108.46753246753246,\"height\":77.29870129870129,\"tabOrder\":4000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Kalender.Jaar\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"},\"Name\":\"Kalender.Jaar\",\"NativeReferenceName\":\"Jaar\"}],\"OrderBy\":[{\"Direction\":1,\"Expression\":{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"}}}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"numericStart\":{\"expr\":{\"Literal\":{\"Value\":\"2022D\"}}},\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"2020L\"}}]]}}}]}}}}],\"slider\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"selection\":[{\"properties\":{\"strictSingleSelect\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 77.30,
+          "width": 108.47,
+          "x": 0.00,
+          "y": 25.14,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"f94ff58d5f688cf65b49\",\"layouts\":[{\"id\":0,\"position\":{\"x\":140.88311688311688,\"y\":236.25974025974025,\"z\":6000,\"width\":358.4415584415584,\"height\":458.1818181818182,\"tabOrder\":6000}}],\"singleVisual\":{\"visualType\":\"clusteredBarChart\",\"projections\":{\"Y\":[{\"queryRef\":\"Measurements.Aantal Verzamelt\"}],\"Category\":[{\"queryRef\":\"Type.Type2\",\"active\":true},{\"queryRef\":\"Type.Type\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"m\",\"Entity\":\"Measurements\",\"Type\":0},{\"Name\":\"t\",\"Entity\":\"Type\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Aantal Verzamelt\"},\"Name\":\"Measurements.Aantal Verzamelt\",\"NativeReferenceName\":\"Aantal Verzamelt\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Type2\"},\"Name\":\"Type.Type2\",\"NativeReferenceName\":\"Type2\"},{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"t\"}},\"Property\":\"Type\"},\"Name\":\"Type.Type\",\"NativeReferenceName\":\"Type\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Aantal Verzamelt\"}}}]},\"drillFilterOtherVisuals\":true,\"hasDefaultSort\":true}}",
+          "filters": "[]",
+          "height": 458.18,
+          "width": 358.44,
+          "x": 140.88,
+          "y": 236.26,
+          "z": 6000.00
+        }
+      ],
+      "width": 1280.00
+    },
+    {
+      "config": "{}",
+      "displayName": "Page 2",
+      "displayOption": 1,
+      "filters": "[]",
+      "height": 720.00,
+      "name": "ReportSection8d1226ec3c767c65d213",
+      "ordinal": 1,
+      "visualContainers": [
+        {
+          "config": "{\"name\":\"71e535bd2c3c620f67c5\",\"layouts\":[{\"id\":0,\"position\":{\"x\":216.3116883116883,\"y\":6.857142857142857,\"z\":1000,\"width\":182.02597402597402,\"height\":85.4025974025974,\"tabOrder\":1000}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Kalender.Maand\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Maand\"},\"Name\":\"Kalender.Maand\",\"NativeReferenceName\":\"Maand\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"numericStart\":{\"expr\":{\"Literal\":{\"Value\":\"2020D\"}}},\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Maand\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"'Jan'\"}}]]}}}]}}}}],\"slider\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"selection\":[{\"properties\":{\"strictSingleSelect\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 85.40,
+          "width": 182.03,
+          "x": 216.31,
+          "y": 6.86,
+          "z": 1000.00
+        },
+        {
+          "config": "{\"name\":\"8e66290de8af69bdf344\",\"layouts\":[{\"id\":0,\"position\":{\"x\":649.3506477653206,\"y\":19.14285714285711,\"width\":300,\"height\":300,\"z\":3000,\"tabOrder\":3000}}],\"singleVisual\":{\"visualType\":\"card\",\"projections\":{\"Values\":[{\"queryRef\":\"Measurements.Aantal Verzamelt\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"m\",\"Entity\":\"Measurements\",\"Type\":0}],\"Select\":[{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Aantal Verzamelt\"},\"Name\":\"Measurements.Aantal Verzamelt\",\"NativeReferenceName\":\"Aantal Verzamelt\"}]},\"autoSelectVisualType\":true,\"drillFilterOtherVisuals\":true}}",
+          "filters": "[]",
+          "height": 300.00,
+          "width": 300.00,
+          "x": 649.35,
+          "y": 19.14,
+          "z": 3000.00
+        },
+        {
+          "config": "{\"name\":\"9c49ebf5056cb1ab9b5e\",\"layouts\":[{\"id\":0,\"position\":{\"x\":14.96103896103896,\"y\":14.96103896103896,\"z\":0,\"width\":182.02597402597402,\"height\":85.4025974025974,\"tabOrder\":0}}],\"singleVisual\":{\"visualType\":\"slicer\",\"projections\":{\"Values\":[{\"queryRef\":\"Kalender.Jaar\",\"active\":true}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"},\"Name\":\"Kalender.Jaar\",\"NativeReferenceName\":\"Jaar\"}]},\"drillFilterOtherVisuals\":true,\"objects\":{\"data\":[{\"properties\":{\"numericStart\":{\"expr\":{\"Literal\":{\"Value\":\"2020D\"}}},\"mode\":{\"expr\":{\"Literal\":{\"Value\":\"'Dropdown'\"}}}}}],\"general\":[{\"properties\":{\"filter\":{\"filter\":{\"Version\":2,\"From\":[{\"Name\":\"k\",\"Entity\":\"Kalender\",\"Type\":0}],\"Where\":[{\"Condition\":{\"In\":{\"Expressions\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"k\"}},\"Property\":\"Jaar\"}}],\"Values\":[[{\"Literal\":{\"Value\":\"2020L\"}}]]}}}]}}}}],\"slider\":[{\"properties\":{\"show\":{\"expr\":{\"Literal\":{\"Value\":\"false\"}}}}}],\"selection\":[{\"properties\":{\"strictSingleSelect\":{\"expr\":{\"Literal\":{\"Value\":\"true\"}}}}}]}}}",
+          "filters": "[]",
+          "height": 85.40,
+          "width": 182.03,
+          "x": 14.96,
+          "y": 14.96,
+          "z": 0.00
+        },
+        {
+          "config": "{\"name\":\"aee3ee804d554a350516\",\"layouts\":[{\"id\":0,\"position\":{\"x\":649.3506477653206,\"y\":329.1428571428571,\"width\":300,\"height\":300,\"z\":2000,\"tabOrder\":2000}}],\"singleVisual\":{\"visualType\":\"clusteredBarChart\",\"projections\":{\"Category\":[{\"queryRef\":\"Grondstof.Grondstof\",\"active\":true}],\"Y\":[{\"queryRef\":\"Measurements.Aantal Verzamelt\"}]},\"prototypeQuery\":{\"Version\":2,\"From\":[{\"Name\":\"g\",\"Entity\":\"Grondstof\",\"Type\":0},{\"Name\":\"m\",\"Entity\":\"Measurements\",\"Type\":0}],\"Select\":[{\"Column\":{\"Expression\":{\"SourceRef\":{\"Source\":\"g\"}},\"Property\":\"Grondstof\"},\"Name\":\"Grondstof.Grondstof\",\"NativeReferenceName\":\"Grondstof\"},{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Aantal Verzamelt\"},\"Name\":\"Measurements.Aantal Verzamelt\",\"NativeReferenceName\":\"Aantal Verzamelt\"}],\"OrderBy\":[{\"Direction\":2,\"Expression\":{\"Measure\":{\"Expression\":{\"SourceRef\":{\"Source\":\"m\"}},\"Property\":\"Aantal Verzamelt\"}}}]},\"autoSelectVisualType\":true,\"drillFilterOtherVisuals\":true}}",
+          "filters": "[]",
+          "height": 300.00,
+          "width": 300.00,
+          "x": 649.35,
+          "y": 329.14,
+          "z": 2000.00
+        }
+      ],
+      "width": 1280.00
+    }
+  ]
+}

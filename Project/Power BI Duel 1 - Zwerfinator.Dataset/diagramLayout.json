@@ -1,0 +1,151 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 1082,
+            "y": 748
+          },
+          "nodeIndex": "Afstanden",
+          "nodeLineageTag": "b736c233-ffe1-4129-a624-c3a35aaec7f4",
+          "size": {
+            "height": 268,
+            "width": 234
+          },
+          "zIndex": 9
+        },
+        {
+          "location": {
+            "x": 540,
+            "y": 686
+          },
+          "nodeIndex": "Data",
+          "nodeLineageTag": "731b6753-12ec-473e-aa2f-32189044222e",
+          "size": {
+            "height": 275,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1479,
+            "y": 711
+          },
+          "nodeIndex": "Gewichten",
+          "nodeLineageTag": "39f59d46-a316-4d5d-943a-a6d33fa1058b",
+          "size": {
+            "height": 254,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 1513,
+            "y": 0
+          },
+          "nodeIndex": "Groep",
+          "nodeLineageTag": "44143e30-e820-41ed-876c-7a7912f30ec1",
+          "size": {
+            "height": 267,
+            "width": 238
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 1140,
+            "y": 304
+          },
+          "nodeIndex": "Grondstof",
+          "nodeLineageTag": "72840475-cca6-43b7-9ae5-562c06c14225",
+          "size": {
+            "height": 252,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 535,
+            "y": 298
+          },
+          "nodeIndex": "Merken",
+          "nodeLineageTag": "e11c9b6a-eb97-407d-9937-62252d806e05",
+          "size": {
+            "height": 256,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 1231,
+            "y": 6
+          },
+          "nodeIndex": "Spec",
+          "nodeLineageTag": "fee802cb-0a00-43f3-84f5-8739a0ab0ea7",
+          "size": {
+            "height": 257,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 865.21875,
+            "y": 299
+          },
+          "nodeIndex": "Type",
+          "nodeLineageTag": "d3f6ce8f-c93f-483e-8c81-3349437c30f6",
+          "size": {
+            "height": 255,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 240,
+            "y": 294.5
+          },
+          "nodeIndex": "Kalender",
+          "nodeLineageTag": "9f337449-4ac4-4989-9968-044d3cc79c44",
+          "size": {
+            "height": 254,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 1561,
+            "y": 456
+          },
+          "nodeIndex": "Measurements",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}
