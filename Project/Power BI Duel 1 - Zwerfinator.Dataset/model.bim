@@ -1,5 +1,5 @@
 {
-  "compatibilityLevel": 1567,
+  "compatibilityLevel": 1601,
   "model": {
     "annotations": [
       {
@@ -8,11 +8,11 @@
       },
       {
         "name": "PBIDesktopVersion",
-        "value": "2.121.942.0 (23.09)"
+        "value": "2.122.746.0 (23.10)"
       },
       {
         "name": "PBI_QueryOrder",
-        "value": "[\"Data\",\"Afstanden\",\"Gewichten\",\"Type\",\"Spec\",\"Groep\",\"Grondstof\",\"Merken\",\"Merken Toevoeging\",\"Merken Ontbrekend\",\"Measurements\"]"
+        "value": "[\"Data\",\"Runs\",\"CBS Wijken\",\"Type\",\"Specificatie\",\"Groep\",\"Grondstof\",\"Merken\",\"Handmatige toevoeging merken\",\"Merken Ontbrekend (check)\",\"Measurements\",\"Kalender\",\"Jaar\",\"Gemeenten\",\"Wijken\",\"Buurten\",\"Neighbourhood Codes\",\"CBS Buurten\",\"CBS Gemeenten\",\"Data Path\"]"
       },
       {
         "name": "PBI_ProTooling",
@@ -34,13 +34,14 @@
       }
     ],
     "dataAccessOptions": {
+      "fastCombine": true,
       "legacyRedirects": true,
       "returnErrorValuesAsNull": true
     },
     "defaultPowerBIDataSourceVersion": "powerBI_V3",
     "expressions": [
       {
-        "name": "Merken Toevoeging",
+        "name": "Handmatige toevoeging merken",
         "annotations": [
           {
             "name": "PBI_NavigationStepName",
@@ -53,21 +54,18 @@
         ],
         "expression": [
           "let",
-          "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"lZFNboQwDIWvgljPJaYcoJvZoVk4iQE3P65MmNH09E1CpVHVQXI3+D37exCHcewh0BdifzoW19PYmy0Ex3Np5gWf5rJg9/bS1ZAFZzZ5lMlTDbvqzg7i+sfvqeQeE9jMP1G1bWm2LGS5zqrkQ7nTHluvlYEtdAMH+KUr50h8adZyK1/EZIRR12nxLXlKjtOW687/sHtaBNrgVa3EBJFCvY73ZNBjcgeysRvlSWjV0TOEgKk+dfxSNo86lOIN55lQR3/A3QggeBTl0VuiBXR8BCFcM4b2/zUBFsyZlLDYha2OTWQ9BnbISRf45GhAuWYGyaB57/Ub\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Sleutel_Merk = _t, Label = _t, Bedrijf = _t, Merk = _t]),",
+          "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"jVKxbsMgEP0V5DlD1KF7YquVunTplmY4w8WmBq664FTp15fDjaKktsrCvffuPeAQu10Fzn4jVqsZsJnAfrWr2tE5Q10SY49X8taj2s4yCWkw7cjn1LmiekJqY8Af//ApFcz5ADrSb/SG1kLV0wLPedLEVpNkBdI9rC9wcg+Y27mkFqiaHNxg8RnLQxKlnNKRGFomFKVJikqSSpraLot5kzEMNhgKY5TZ72iTqWrm+ZRnhhycq+I4gLdO3uU1tDhgMAswe0cbD2yPZe4OnMMg66L/OTXV+7hePzwqwTnXp9fyZUdYf8Kus1jm/oCvlgFhQJYRXoRm9l/mYipKeGCLx4gu/4mCa3lijNEWmln3pMu8weoBHRmkUBb4JN/C0mx33ggcoWTf/Q8=\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Sleutel_Merk = _t, Label = _t, Bedrijf = _t, Merk = _t]),",
           "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Sleutel_Merk\", type text}, {\"Label\", type text}, {\"Bedrijf\", type text}, {\"Merk\", type text}})",
           "in",
           "    #\"Changed Type\""
         ],
         "kind": "m",
-        "lineageTag": "e340a85a-9a82-41c7-82b8-dc643a661494"
+        "lineageTag": "e340a85a-9a82-41c7-82b8-dc643a661494",
+        "queryGroup": "Dimensions"
       },
       {
-        "name": "Merken Ontbrekend",
+        "name": "Merken Ontbrekend (check)",
         "annotations": [
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
           {
             "name": "PBI_ResultType",
             "value": "Table"
@@ -95,7 +93,50 @@
           "    Custom2"
         ],
         "kind": "m",
-        "lineageTag": "b56fd81a-b182-4fd9-85f6-492173c9f266"
+        "lineageTag": "b56fd81a-b182-4fd9-85f6-492173c9f266",
+        "queryGroup": "Dimensions"
+      },
+      {
+        "name": "Neighbourhood Codes",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "expression": [
+          "let",
+          "    Source = Python.Execute(\"import requests#(lf)import geopandas as gpd#(lf)import pandas as pd#(lf)from shapely.geometry import box#(lf)#(lf)# Pagination identificators#(lf)count = 1000#(lf)startindex = 0#(lf)#(lf)# Initiliazing empty GeoPandas DataFrame to store the results#(lf)geodata = pd.DataFrame()#(lf)#(lf)# Making request and appending results in dataframe#(lf)while True:#(lf)    geojson_url = f'https://service.pdok.nl/cbs/gebiedsindelingen/2022/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=buurt_gegeneraliseerd&outputFormat=json&count={count}&startIndex={startindex}&srsName=EPSG:4326'#(lf)    response = requests.get(geojson_url)#(lf)    #(lf)    if response.status_code == 200:#(lf)        data = response.json()#(lf)        features = data.get(\"\"features\"\", [])#(lf)       #(lf)        # Extract the bbox and other attributes into lists#(lf)        bbox_list = [feature['bbox'] for feature in features]       #(lf)        statcode_list = [feature['properties']['statcode'] for feature in features]#(lf)#(lf)        statdata = pd.DataFrame({'statcode': statcode_list, 'bbox': bbox_list})  #(lf)#(lf)        # Append data to geodata #(lf)        geodata = pd.concat([geodata,statdata], ignore_index=True)#(lf)#(lf)        # Check for latest response and break after#(lf)        if len(features) < count:          #(lf)            break#(lf)#(lf)        # Update the startIndex for the next request#(lf)        startindex += len(features)#(lf)    else:        #(lf)        break#(lf)#(lf)#(lf)# Adding BBOX columns#(lf)geodata[['minx', 'miny', 'maxx', 'maxy']] = geodata['bbox'].apply(lambda x: pd.Series({'minx': x[0], 'miny': x[1], 'maxx': x[2], 'maxy': x[3]}))#(lf)geodata['geometry'] = [box(minx, miny, maxx, maxy) for minx, miny, maxx, maxy in zip(geodata['minx'], geodata['miny'], geodata['maxx'], geodata['maxy'])]#(lf)#(lf)# Getting data from from workbook dataset and cleaning dataset#(lf)#(lf)file_path = r\"\"\"&#\"Data Path\"& \"dataset-zwerfinator-incl-sleutels.xlsx\"\"#(lf)#(lf)workbook = pd.read_excel(file_path,sheet_name=\"\"Data\"\")#(lf)workbook.columns = workbook.columns.str.lower()#(lf)workbook = workbook[['latitude', 'longitude']] #(lf)workbook.drop_duplicates(subset=['latitude', 'longitude'], inplace=True)#(lf)#(lf)# Creating seperate GeoData dataframes#(lf)workbook_gdf = gpd.GeoDataFrame(workbook, geometry=gpd.points_from_xy(workbook['longitude'], workbook['latitude']))#(lf)geodata_gdf = gpd.GeoDataFrame(geodata)#(lf)geodata_gdf['polygon'] = geodata_gdf['geometry']#(lf)geodata_gdf.set_geometry('geometry', inplace=True)#(lf)#(lf)# Perform a spatial join to find points that fall within the bboxes#(lf)neighbourhood_statcodes = gpd.sjoin(workbook_gdf, geodata_gdf, how=\"\"left\"\", predicate=\"\"intersects\"\")#(lf)#(lf)#(lf)# Filtering columns#(lf)neighbourhood_statcodes = neighbourhood_statcodes[['latitude', 'longitude', 'statcode', 'polygon']] #(lf)neighbourhood_statcodes.drop_duplicates(subset=['latitude', 'longitude'], inplace=True)#(lf)#(lf)neighbourhood_statcodes = pd.DataFrame(neighbourhood_statcodes)#(lf)neighbourhood_statcodes['latitude'] = round(neighbourhood_statcodes['latitude'],13)#(lf)neighbourhood_statcodes['longitude'] = neighbourhood_statcodes['longitude'].apply(lambda x: round(x, 14))#(lf)#(lf)neighbourhood_statcodes\"),",
+          "    neighbourhood_statcodes1 = Source{[Name=\"neighbourhood_statcodes\"]}[Value],",
+          "    #\"Replaced Value\" = Table.ReplaceValue(neighbourhood_statcodes1,\".\",\",\",Replacer.ReplaceText,{\"latitude\", \"longitude\"}),",
+          "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Replaced Value\",{{\"latitude\", type text}, {\"longitude\", type text}}),",
+          "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"polygon\", \"neighbourhoud_location\"}})",
+          "in",
+          "    #\"Renamed Columns\""
+        ],
+        "kind": "m",
+        "lineageTag": "6718782e-4fab-4cce-a0bf-776e1d6506cd",
+        "queryGroup": "Mapping Tables"
+      },
+      {
+        "name": "Data Path",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ],
+        "expression": "\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\Project\\\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]",
+        "kind": "m",
+        "lineageTag": "aba49006-bbde-45b8-9016-68658966972a"
       }
     ],
     "queryGroups": [
@@ -103,71 +144,147 @@
         "annotations": [
           {
             "name": "PBI_QueryGroupOrder",
-            "value": "0"
+            "value": "1"
           }
         ],
         "folder": "Facts"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "0"
+          }
+        ],
+        "folder": "Dimensions"
+      },
+      {
+        "annotations": [
+          {
+            "name": "PBI_QueryGroupOrder",
+            "value": "2"
+          }
+        ],
+        "folder": "Mapping Tables"
       }
     ],
     "relationships": [
       {
-        "name": "55d75b50-2997-495d-acc2-8a908a9e0597",
+        "name": "7438336e-ec6f-45a0-9c15-63b4480e3559",
         "crossFilteringBehavior": "bothDirections",
         "fromCardinality": "one",
         "fromColumn": "Sleutel_Soort_Grondstof",
-        "fromTable": "Spec",
+        "fromTable": "Specificatie",
         "toColumn": "Sleutel_Soort_Grondstof",
-        "toTable": "Grondstof"
+        "toTable": "Groep"
       },
       {
-        "name": "c4cfb751-df09-4462-a91b-4e1b07295564",
+        "name": "62aacaca-ddf7-488f-90a0-b9892357fc77",
         "crossFilteringBehavior": "bothDirections",
         "fromCardinality": "one",
         "fromColumn": "Sleutel_Soort_Grondstof",
-        "fromTable": "Groep",
+        "fromTable": "Grondstof",
         "toColumn": "Sleutel_Soort_Grondstof",
-        "toTable": "Grondstof"
+        "toTable": "Groep"
       },
       {
-        "name": "942f9715-e875-4d14-91ac-b6862e3f16aa",
+        "name": "261c5684-cbd1-4aba-9c07-dc0ee3a95884",
+        "fromColumn": "statcode",
+        "fromTable": "Data",
+        "toColumn": "statcode",
+        "toTable": "Buurten"
+      },
+      {
+        "name": "3caecd42-433b-4aee-aaef-8e76dbc0ddcf",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "one",
+        "fromColumn": "statcode",
+        "fromTable": "Buurten",
+        "toColumn": "statcode",
+        "toTable": "CBS Buurten"
+      },
+      {
+        "name": "4a99a5cf-e8a3-4edc-a54e-ee22bd8b52fc",
+        "crossFilteringBehavior": "bothDirections",
+        "fromColumn": "statcode_wijk",
+        "fromTable": "Buurten",
+        "toColumn": "statcode",
+        "toTable": "Wijken"
+      },
+      {
+        "name": "7dd9990e-89d5-47cf-a35e-b96fa466e3f1",
+        "crossFilteringBehavior": "bothDirections",
+        "fromColumn": "statcode _gemeente",
+        "fromTable": "Wijken",
+        "toColumn": "statcode",
+        "toTable": "Gemeenten"
+      },
+      {
+        "name": "0555a50d-85bf-4f9f-b793-95469de6c837",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "one",
+        "fromColumn": "statcode",
+        "fromTable": "Wijken",
+        "toColumn": "statcode",
+        "toTable": "CBS Wijken"
+      },
+      {
+        "name": "7847267e-029d-459f-9016-9070e9bb06be",
+        "crossFilteringBehavior": "bothDirections",
+        "fromCardinality": "one",
+        "fromColumn": "statcode",
+        "fromTable": "Gemeenten",
+        "toColumn": "statcode",
+        "toTable": "CBS Gemeenten"
+      },
+      {
+        "name": "7926596e-d95e-4aa5-a5e6-bd16e0b9b797",
         "fromColumn": "Sleutel_Soort_Grondstof",
         "fromTable": "Data",
         "toColumn": "Sleutel_Soort_Grondstof",
-        "toTable": "Grondstof"
+        "toTable": "Groep"
       },
       {
-        "name": "531054ed-dc49-455c-98b0-90d585f4bd1c",
-        "fromColumn": "Sleutel_Soort_Grondstof_Type",
-        "fromTable": "Data",
-        "toColumn": "Sleutel_Soort_Grondstof_Type",
-        "toTable": "Type"
-      },
-      {
-        "name": "507a651a-588c-4c64-8f0c-f54a090069ff",
+        "name": "f2c52215-ccc4-4a22-b841-9cf32a2290fd",
         "fromColumn": "Sleutel_Merk",
         "fromTable": "Data",
         "toColumn": "Sleutel_Merk",
         "toTable": "Merken"
       },
       {
-        "name": "a4d64840-ada4-410b-97c3-0f9eecef77e4",
+        "name": "471f69bb-f7e2-4723-ae45-bcb095241af4",
+        "fromColumn": "Sleutel_Soort_Grondstof_Type",
+        "fromTable": "Data",
+        "toColumn": "Sleutel_Soort_Grondstof_Type",
+        "toTable": "Type"
+      },
+      {
+        "name": "0df0c9de-e208-4157-adf9-b86cd2d48398",
+        "crossFilteringBehavior": "bothDirections",
         "fromColumn": "Sleutel_Jaar_Wijk_Run",
         "fromTable": "Data",
         "toColumn": "Sleutel_Jaar_Wijk_Run",
-        "toTable": "Afstanden"
+        "toTable": "Runs"
       },
       {
-        "name": "f7afb11b-73c8-48b0-85b5-cfc4eb7e8c7b",
+        "name": "582b95b3-92dd-4619-aae9-304bf7489cb7",
+        "fromColumn": "Year",
+        "fromTable": "Kalender",
+        "toColumn": "Year",
+        "toTable": "Jaar"
+      },
+      {
+        "name": "452d6541-199a-4f8f-a13c-6a0d609e7595",
         "fromColumn": "Datum",
         "fromTable": "Data",
-        "toColumn": "Datum",
+        "toColumn": "Date",
         "toTable": "Kalender"
       }
     ],
     "sourceQueryCulture": "nl-NL",
     "tables": [
       {
-        "name": "Data",
+        "name": "Runs",
         "annotations": [
           {
             "name": "PBI_NavigationStepName",
@@ -178,191 +295,9 @@
             "value": "Table"
           }
         ],
-        "columns": [
+        "changedProperties": [
           {
-            "name": "Datum",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              },
-              {
-                "name": "UnderlyingDateTimeDataType",
-                "value": "Date"
-              }
-            ],
-            "changedProperties": [
-              {
-                "property": "IsHidden"
-              }
-            ],
-            "dataType": "dateTime",
-            "formatString": "Long Date",
-            "isHidden": true,
-            "lineageTag": "e0e100dd-ce45-47a3-9f94-26498ffe88e4",
-            "sourceColumn": "Datum",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Tijd",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              },
-              {
-                "name": "UnderlyingDateTimeDataType",
-                "value": "Time"
-              }
-            ],
-            "dataType": "dateTime",
-            "formatString": "Long Time",
-            "lineageTag": "5289b337-90e1-42fd-a81d-8634eec244b8",
-            "sourceColumn": "Tijd",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "latitude",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "User"
-              },
-              {
-                "name": "PBI_FormatHint",
-                "value": "{\"isGeneralNumber\":true}"
-              }
-            ],
-            "dataCategory": "Latitude",
-            "dataType": "double",
-            "lineageTag": "4fa0ca17-1d68-4cdd-8373-a964ea9d6d68",
-            "sourceColumn": "latitude",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Longitude",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "User"
-              },
-              {
-                "name": "PBI_FormatHint",
-                "value": "{\"isGeneralNumber\":true}"
-              }
-            ],
-            "dataCategory": "Longitude",
-            "dataType": "double",
-            "lineageTag": "9cf93ecf-d83e-4e2c-9b23-5700d15574b2",
-            "sourceColumn": "Longitude",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Sleutel_Merk",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
-            ],
-            "changedProperties": [
-              {
-                "property": "IsHidden"
-              }
-            ],
-            "dataType": "string",
-            "isHidden": true,
-            "lineageTag": "92a6e459-b539-4091-90b7-f2820cf423f8",
-            "sourceColumn": "Sleutel_Merk",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Sleutel_Soort_Grondstof",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
-            ],
-            "changedProperties": [
-              {
-                "property": "IsHidden"
-              }
-            ],
-            "dataType": "string",
-            "isHidden": true,
-            "lineageTag": "7416d4c5-12b0-4b96-8ff4-e8f8aa294628",
-            "sourceColumn": "Sleutel_Soort_Grondstof",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Sleutel_Jaar_Wijk_Run",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
-            ],
-            "dataType": "string",
-            "lineageTag": "35ee1a30-19d5-4904-bccf-a60e56a340ee",
-            "sourceColumn": "Sleutel_Jaar_Wijk_Run",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Sleutel_Soort_Grondstof_Type",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
-            ],
-            "changedProperties": [
-              {
-                "property": "IsHidden"
-              }
-            ],
-            "dataType": "string",
-            "isHidden": true,
-            "lineageTag": "7e8f0068-f244-4e70-b9fc-a797a9afc99c",
-            "sourceColumn": "Sleutel_Soort_Grondstof_Type",
-            "summarizeBy": "none"
-          }
-        ],
-        "lineageTag": "731b6753-12ec-473e-aa2f-32189044222e",
-        "partitions": [
-          {
-            "name": "Data",
-            "mode": "import",
-            "queryGroup": "Facts",
-            "source": {
-              "expression": [
-                "let",
-                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
-                "    Data_Sheet = Source{[Item=\"Data\",Kind=\"Sheet\"]}[Data],",
-                "    #\"Promoted Headers\" = Table.PromoteHeaders(Data_Sheet, [PromoteAllScalars=true]),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Gebied\", type text}, {\"Run\", Int64.Type}, {\"Datum\", type date}, {\"Tijd\", type time}, {\"latitude\", type number}, {\"Longitude\", type number}, {\"Merk\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Sleutel_Jaar_Wijk_Run\", type text}, {\"Sleutel_Soort_Grondstof_Type\", type text}}),",
-                "    #\"Dimensie Kolommen verwijderd\" = Table.RemoveColumns(#\"Changed Type\",{\"Soort\", \"Grondstof\", \"Type\", \"Run\", \"Jaar\"}),",
-                "    #\"Kolom Merk naar Sleutel_Merk\" = Table.RenameColumns(#\"Dimensie Kolommen verwijderd\",{{\"Merk\", \"Sleutel_Merk\"}}),",
-                "    #\"Lowercased Sleutel_Merk\" = Table.TransformColumns(#\"Kolom Merk naar Sleutel_Merk\",{{\"Sleutel_Merk\", Text.Lower, type text}}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Lowercased Sleutel_Merk\",{\"Gebied\"})",
-                "in",
-                "    #\"Removed Columns\""
-              ],
-              "type": "m"
-            }
-          }
-        ]
-      },
-      {
-        "name": "Afstanden",
-        "annotations": [
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
-          {
-            "name": "PBI_ResultType",
-            "value": "Table"
+            "property": "Name"
           }
         ],
         "columns": [
@@ -374,51 +309,15 @@
                 "value": "Automatic"
               }
             ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
             "dataType": "string",
+            "isHidden": true,
             "lineageTag": "d2fda42d-d309-4ab0-baf1-2978080709aa",
             "sourceColumn": "Sleutel_Jaar_Wijk_Run",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Jaar",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "User"
-              }
-            ],
-            "dataType": "int64",
-            "formatString": "0",
-            "lineageTag": "1daa486b-66de-4b32-8019-7efda1c38dd4",
-            "sourceColumn": "Jaar",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Gebied",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
-            ],
-            "dataCategory": "Place",
-            "dataType": "string",
-            "lineageTag": "9d932e0a-b00d-43df-9bb5-4aa0fd389668",
-            "sourceColumn": "Gebied",
-            "summarizeBy": "none"
-          },
-          {
-            "name": "Run",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "User"
-              }
-            ],
-            "dataType": "int64",
-            "formatString": "0",
-            "lineageTag": "2834d982-b6e4-44d8-9369-1c0b3eb96b1a",
-            "sourceColumn": "Run",
             "summarizeBy": "none"
           },
           {
@@ -439,7 +338,7 @@
         "lineageTag": "b736c233-ffe1-4129-a624-c3a35aaec7f4",
         "partitions": [
           {
-            "name": "Afstanden",
+            "name": "Runs",
             "mode": "import",
             "queryGroup": "Facts",
             "source": {
@@ -449,10 +348,9 @@
                 "    Afstanden_Sheet = Source{[Item=\"Afstanden\",Kind=\"Sheet\"]}[Data],",
                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Afstanden_Sheet, [PromoteAllScalars=true]),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Gebied\", type text}, {\"Run\", Int64.Type}, {\"Afstand\", Int64.Type}, {\"Sleutel_Jaar_Wijk_Run\", type text}, {\"Aantal rijen\", Int64.Type}}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Aantal rijen\"}),",
-                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Columns\",{\"Sleutel_Jaar_Wijk_Run\", \"Jaar\", \"Gebied\", \"Run\", \"Afstand\"})",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Aantal rijen\", \"Gebied\", \"Run\", \"Jaar\"})",
                 "in",
-                "    #\"Reordered Columns\""
+                "    #\"Removed Columns\""
               ],
               "type": "m"
             }
@@ -460,116 +358,716 @@
         ]
       },
       {
-        "name": "Gewichten",
+        "name": "Measurements",
         "annotations": [
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
           {
             "name": "PBI_ResultType",
             "value": "Table"
           }
         ],
-        "columns": [
+        "lineageTag": "113f8e3a-fce4-471b-b1ab-e2f54475ef65",
+        "measures": [
           {
-            "name": "Jaar",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
+            "name": "Afval verzamelt",
+            "displayFolder": "Afval Verzamelt",
+            "expression": "COUNTROWS(Data)",
+            "formatString": "#,0",
+            "lineageTag": "bf1dde1b-504b-4db8-b7ba-7aed0cb5db98"
+          },
+          {
+            "name": "Afval verzamelt LY",
+            "displayFolder": "Afval Verzamelt",
+            "expression": [
+              "CALCULATE(",
+              "    [Afval verzamelt],",
+              "    SAMEPERIODLASTYEAR('Kalender'[Date])",
+              "    )"
             ],
-            "dataType": "int64",
+            "formatString": "#,0",
+            "lineageTag": "f75ce658-21ea-4496-b4e0-fbe4ea5370e7"
+          },
+          {
+            "name": "Afval per km",
+            "displayFolder": "Afval Dichtheid",
+            "expression": [
+              "",
+              "DIVIDE(",
+              "    [Afval verzamelt],",
+              "    DIVIDE(",
+              "        [Afstand (km)],",
+              "        1000,",
+              "        0",
+              "    ),",
+              "    0",
+              ")",
+              ""
+            ],
+            "formatString": "#,0.0",
+            "lineageTag": "3224b095-de0d-4166-9889-6d484b78b6e5"
+          },
+          {
+            "name": "Afval per km LY",
+            "displayFolder": "Afval Dichtheid",
+            "expression": [
+              "CALCULATE(",
+              "    [Afval per km],",
+              "    SAMEPERIODLASTYEAR('Kalender'[Date])",
+              ")"
+            ],
+            "formatString": "#,0.0",
+            "lineageTag": "9d21b958-9120-46bd-99f4-8ca7d820a8b3"
+          },
+          {
+            "name": "Aantal Runs",
+            "displayFolder": "Runs",
+            "expression": "DISTINCTCOUNT(Data[Sleutel_Jaar_Wijk_Run])",
             "formatString": "0",
-            "lineageTag": "69336da8-5cab-48cf-9a59-acb504852890",
-            "sourceColumn": "Jaar",
-            "summarizeBy": "sum"
+            "lineageTag": "165b3bed-4e03-45f0-8b5e-b9ad9190177c"
           },
           {
-            "name": "Wijk",
+            "name": "Afval verzamelt YoY",
             "annotations": [
               {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
+                "name": "PBI_FormatHint",
+                "value": "{\"isDecimal\":true}"
               }
             ],
-            "dataType": "string",
-            "lineageTag": "b4606d0c-22f4-4e99-bf56-fd63e35a02ba",
-            "sourceColumn": "Wijk",
-            "summarizeBy": "none"
+            "displayFolder": "Afval Verzamelt",
+            "expression": [
+              "[Afval verzamelt] - [Afval verzamelt LY]",
+              "",
+              "",
+              "",
+              "    "
+            ],
+            "formatString": "#,0",
+            "lineageTag": "8cd0e30b-7408-4cc2-9bfa-0812deefd676"
           },
           {
-            "name": "Soort",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
+            "name": "Afval verzamelt YoY %",
+            "displayFolder": "Afval Verzamelt",
+            "expression": [
+              "",
+              "    DIVIDE(",
+              "        [Afval verzamelt YoY],",
+              "        [Afval verzamelt LY],",
+              "        0",
+              "    )"
             ],
-            "dataType": "string",
-            "lineageTag": "2dd36c18-af60-4044-8027-0a10a50ddc25",
-            "sourceColumn": "Soort",
-            "summarizeBy": "none"
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "3d97a16c-4ef2-4521-a7a4-4514f94a45eb"
           },
           {
-            "name": "Gewicht",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
+            "name": "Afval verzamelt CY",
+            "displayFolder": "Afval Verzamelt",
+            "expression": [
+              "",
+              "IF(",
+              "    SELECTEDVALUE('Kalender'[Year]) = SELECTEDVALUE('Alle Jaren Kalendar'[Year]),",
+              "    [Afval Verzamelt All]",
+              ")"
             ],
-            "dataType": "int64",
             "formatString": "0",
-            "lineageTag": "bfd3a0f9-0fc4-4e82-b2f7-1be7f1441b32",
-            "sourceColumn": "Gewicht",
-            "summarizeBy": "sum"
+            "lineageTag": "aa749707-445b-4de1-b2bd-bcdd8c1a3a50"
           },
           {
-            "name": "Tussengroep",
-            "annotations": [
-              {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
-              }
+            "name": "Afval Verzamelt All",
+            "displayFolder": "Overig",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    [Afval verzamelt],",
+              "    TREATAS(VALUES('Alle Jaren Kalendar'[Year]), 'Jaar'[Year])",
+              ")"
             ],
-            "dataType": "string",
-            "lineageTag": "44563be2-8de6-4120-89eb-278f189e95ff",
-            "sourceColumn": "Tussengroep",
-            "summarizeBy": "none"
+            "formatString": "0",
+            "lineageTag": "8817a2c8-26e2-44f2-828b-da3703400b96"
           },
           {
-            "name": "Hoofdgroep",
-            "annotations": [
+            "name": "Afval verzamelt Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "\"Afval verzamelt: \" & FORMAT([Afval verzamelt],\"#,###\", \"nl-NL\")"
+            ],
+            "lineageTag": "8cc433df-b347-4857-9d0d-8d49794bebfc"
+          },
+          {
+            "name": "Afval verzamelt Subtitel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR YoY           = [Afval verzamelt YoY]",
+              "VAR YoYPercentage = [Afval verzamelt YoY %]",
+              "VAR Icoon = ",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        YoY > 0, \"▲\",",
+              "        YoY < 0, \"▼\",",
+              "        YoY = 0, \"\"",
+              "    )",
+              "",
+              "VAR PlusMinus = ",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        YoY > 0, \"+\",",
+              "        YoY < 0, \"\",",
+              "        YoY= 0, \"\"",
+              "    )",
+              "",
+              "VAR Subtitel = Icoon & \" \" & PlusMinus & FORMAT(YoYPercentage, \"0.0%\", \"nl-NL\") & \" | \" & FORMAT(YoY,\"#,###\", \"nl-NL\") & \" YoY\"",
+              "",
+              "RETURN",
+              "    Subtitel "
+            ],
+            "lineageTag": "dd6bac1f-113b-4c8f-899d-582cfdacc483"
+          },
+          {
+            "name": "Start/Eind jaar",
+            "changedProperties": [
               {
-                "name": "SummarizationSetBy",
-                "value": "Automatic"
+                "property": "IsHidden"
               }
             ],
-            "dataType": "string",
-            "lineageTag": "ab8a7a8a-5420-4286-a62e-ea30ebce7869",
-            "sourceColumn": "Hoofdgroep",
-            "summarizeBy": "none"
+            "displayFolder": "Overig",
+            "expression": [
+              "",
+              "VAR HuidigJaar = SELECTEDVALUE('Jaar'[Year])",
+              "VAR AlleJaren = VALUES('Alle Jaren Kalendar'[Year])",
+              "VAR EindJaar    = ",
+              "    CALCULATE(",
+              "        MAX('Jaar'[Year]),",
+              "        ",
+              "        ALL('Jaar'[Year])",
+              "    )",
+              "VAR StartJaar   = ",
+              "    CALCULATE(",
+              "        MIN('Jaar'[Year]),       ",
+              "        ALL('Jaar'[Year])",
+              "    )",
+              "VAR Resultaat = ",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        EindJaar IN AlleJaren,EindJaar,",
+              "        StartJaar IN AlleJaren,StartJaar",
+              "      ",
+              "    )",
+              "RETURN",
+              "    Resultaat",
+              ""
+            ],
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "49e70bc2-9128-490e-a7b9-ee2c9f10a7aa"
+          },
+          {
+            "name": "Afval per km YoY",
+            "displayFolder": "Afval Dichtheid",
+            "expression": [
+              "[Afval per km] - [Afval per km LY]",
+              ""
+            ],
+            "formatString": "#,0.00",
+            "lineageTag": "3833e1d7-d937-4d17-81b9-62f665064782"
+          },
+          {
+            "name": "Afval per km YoY %",
+            "displayFolder": "Afval Dichtheid",
+            "expression": [
+              "",
+              "DIVIDE(",
+              "    [Afval per km YoY],",
+              "    [Afval per km LY],",
+              "    0",
+              ")"
+            ],
+            "formatString": "0.0%;-0.0%;0.0%",
+            "lineageTag": "5c108977-30e5-43ea-9a64-c23d927c48cd"
+          },
+          {
+            "name": "Afval per km All",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "Overig",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    [Afval per km],",
+              "    TREATAS(VALUES('Alle Jaren Kalendar'[Year]), 'Jaar'[Year])",
+              ")"
+            ],
+            "lineageTag": "dfa727ed-376b-423a-b27c-e5e5cd73f764"
+          },
+          {
+            "name": "Afval per km Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "\"Afval per km: \" & FORMAT([Afval per km],\"0.0\", \"nl-NL\")"
+            ],
+            "lineageTag": "96f200b6-951f-46ff-b5cb-37c95069b690"
+          },
+          {
+            "name": "Afval per km Subtitel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR YoY           = [Afval per km YoY]",
+              "VAR YoYPercentage = [Afval per km YoY %]  ",
+              "VAR Icoon = ",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        YoY > 0, \"▲\",",
+              "        YoY < 0, \"▼\",",
+              "        YoY = 0, \"\"",
+              "    )",
+              "VAR PlusMinus = ",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        YoYPercentage > 0, \"+\",",
+              "        YoYPercentage < 0, \"\",",
+              "        YoYPercentage = 0, \"\"",
+              "    )",
+              "VAR Subtitel = Icoon & \" \" & PlusMinus & FORMAT(YoYPercentage, \"0.0%\", \"nl-NL\") & \" | \" & FORMAT(YoY,\"0.0\", \"nl-NL\") & \" YoY\"",
+              "",
+              "RETURN",
+              "    Subtitel"
+            ],
+            "lineageTag": "522b270d-91f1-46cc-8c60-65ee3602fa91"
+          },
+          {
+            "name": "Afval per km CY",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "Afval Dichtheid",
+            "expression": [
+              "",
+              "IF(",
+              "    SELECTEDVALUE('Jaar'[Year]) = SELECTEDVALUE('Alle Jaren Kalendar'[Year]),",
+              "    [Afval per km]",
+              ")"
+            ],
+            "lineageTag": "d8d31ef3-5cb7-4270-91e4-c8c7a74b7953"
+          },
+          {
+            "name": "Afstand (km)",
+            "displayFolder": "Runs",
+            "expression": "SUM('Runs'[Afstand])",
+            "formatString": "#,0",
+            "lineageTag": "dc933c03-36ff-47fb-933c-fb61f1515ff8"
+          },
+          {
+            "name": "Shape Map Color",
+            "annotations": [
+              {
+                "name": "PBI_FormatHint",
+                "value": "{\"isGeneralNumber\":true}"
+              }
+            ],
+            "displayFolder": "Kleur Codering",
+            "expression": [
+              "",
+              "SWITCH(",
+              "    TRUE(),",
+              "    [Selected Calculation] = \"'Measurements'[Afval verzamelt]\", [Afval verzamelt],",
+              "    [Selected Calculation] = \"'Measurements'[Afval verzamelt YoY]\", [Afval verzamelt YoY],",
+              "    [Selected Calculation] = \"'Measurements'[Afval verzamelt YoY %]\", [Afval verzamelt YoY %],",
+              "    [Selected Calculation] = \"'Measurements'[Afval per km]\", [Afval per km],",
+              "    [Selected Calculation] = \"'Measurements'[Afval per km YoY]\", [Afval per km YoY],",
+              "    [Selected Calculation] = \"'Measurements'[Afval per km YoY %]\", [Afval per km YoY %],",
+              "    0",
+              ")",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "lineageTag": "e84c2231-e60c-46f5-8957-a97f9eab8fd0"
+          },
+          {
+            "name": "Selected Calculation",
+            "displayFolder": "Overig",
+            "expression": "SELECTEDVALUE('Selector: Calculatie'[Calculation Parameter Fields] )",
+            "lineageTag": "e1740526-c758-4664-9f83-a9568230d861"
+          },
+          {
+            "name": "Oppervlakte wijk m2",
+            "displayFolder": "Afval Dichtheid",
+            "expression": "SUM('CBS Wijken'[Oppervlakte])",
+            "formatString": "0",
+            "lineageTag": "bd2d623b-0d08-41d2-a185-2899498b153b"
+          },
+          {
+            "name": "Afstand (km) All",
+            "displayFolder": "Overig",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    [Afstand (km)],",
+              "    TREATAS(VALUES('Alle Jaren Kalendar'[Year]), 'Jaar'[Year])",
+              ")"
+            ],
+            "formatString": "0",
+            "lineageTag": "6bf53598-6423-47e1-95ed-2d8785f0f125"
+          },
+          {
+            "name": "Aantal Runs All",
+            "displayFolder": "Overig",
+            "expression": [
+              "",
+              "CALCULATE(",
+              "    [Aantal Runs],",
+              "    TREATAS(VALUES('Alle Jaren Kalendar'[Year]), 'Jaar'[Year])",
+              ")"
+            ],
+            "formatString": "0",
+            "lineageTag": "e8a9755e-90bf-4c85-8737-f072611a9318"
+          },
+          {
+            "name": "Map Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR LocatieFilter    = SELECTEDVALUE('Selector: Wijk / Buurt'[Switch: District / Neighborhood Fields])",
+              "VAR CalculatieFilter = SELECTEDVALUE('Selector: Calculatie'[Calculation Parameter Fields])",
+              "",
+              "VAR LocatieLaag      = ",
+              "    SWITCH(",
+              "        TRUE(),    ",
+              "        LocatieFilter = \"'Wijken'[statcode]\", \"wijk\",",
+              "        LocatieFilter = \"'Buurten'[statcode]\", \"buurt\"",
+              "    )",
+              "",
+              "VAR Meting = ",
+              "    SWITCH(",
+              "        TRUE(),  ",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt]\"  , \"Verzamelt afval\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY]\", \"Verzamelt afval YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY %]\", \"Verzameltafval YoY %\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km]\", \"Afval per km\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY]\", \"Afval per km YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY %]\", \"Afval per km YoY%\"  ",
+              "    )",
+              "VAR Titel  = Meting & \" per \" & LocatieLaag",
+              "",
+              "",
+              "RETURN",
+              "    Titel "
+            ],
+            "lineageTag": "7e6518f0-cf52-4dde-b1f7-cb959ace387e"
+          },
+          {
+            "name": "Oppervlakte buurt m2",
+            "displayFolder": "Afval Dichtheid",
+            "expression": "SUM('CBS Buurten'[Oppervlakte])",
+            "formatString": "0",
+            "lineageTag": "f4147769-1fc5-4093-a405-8d7c2baa3fe5"
+          },
+          {
+            "name": "Grafiek Groep Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR CalculatieFilter = SELECTEDVALUE('Selector: Calculatie'[Calculation Parameter Fields])",
+              "VAR Meting = ",
+              "    SWITCH(",
+              "        TRUE(),  ",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt]\"  , \"Verzamelt afval\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY]\", \"Verzamelt afval YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY %]\", \"Verzameltafval YoY %\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km]\", \"Afval per km\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY]\", \"Afval per km YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY %]\", \"Afval per km YoY%\"  ",
+              "    )",
+              "VAR Titel  = Meting & \" per Supergroep, Groep\"",
+              "",
+              "",
+              "RETURN",
+              "    Titel "
+            ],
+            "lineageTag": "fb0469df-45f8-4d82-ac07-b7bf3cfe467f"
+          },
+          {
+            "name": "Grafiek Grondstof Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR CalculatieFilter = SELECTEDVALUE('Selector: Calculatie'[Calculation Parameter Fields])",
+              "VAR Meting = ",
+              "    SWITCH(",
+              "        TRUE(),  ",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt]\"  , \"Verzamelt afval\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY]\", \"Verzamelt afval YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY %]\", \"Verzameltafval YoY %\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km]\", \"Afval per km\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY]\", \"Afval per km YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY %]\", \"Afval per km YoY%\"  ",
+              "    )",
+              "VAR Titel  = Meting & \" per Grondstof, Soort\"",
+              "",
+              "RETURN",
+              "    Titel "
+            ],
+            "lineageTag": "f77b550b-061e-4e5d-947f-56304e4d6c14"
+          },
+          {
+            "name": "Grafiek Merk Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR CalculatieFilter = SELECTEDVALUE('Selector: Calculatie'[Calculation Parameter Fields])",
+              "VAR Meting = ",
+              "    SWITCH(",
+              "        TRUE(),  ",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt]\"  , \"Verzamelt afval\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY]\", \"Verzamelt afval YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY %]\", \"Verzameltafval YoY %\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km]\", \"Afval per km\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY]\", \"Afval per km YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY %]\", \"Afval per km YoY%\"  ",
+              "    )",
+              "VAR Titel  = Meting & \" per Bedrijf, Merk, Label\"",
+              "",
+              "RETURN",
+              "    Titel "
+            ],
+            "lineageTag": "d18a941d-6c2a-49c7-b6a7-83117cb8cd8d"
+          },
+          {
+            "name": "Grafiek Type/Specificatie Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR CalculatieFilter = SELECTEDVALUE('Selector: Calculatie'[Calculation Parameter Fields])",
+              "VAR Meting = ",
+              "    SWITCH(",
+              "        TRUE(),  ",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt]\"  , \"Verzamelt afval\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY]\", \"Verzamelt afval YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval verzamelt YoY %]\", \"Verzameltafval YoY %\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km]\", \"Afval per km\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY]\", \"Afval per km YoY\",",
+              "        CalculatieFilter   = \"'Measurements'[Afval per km YoY %]\", \"Afval per km YoY%\"  ",
+              "    )",
+              "VAR Titel  = Meting & \" per Type, Specificatie\"",
+              "",
+              "RETURN",
+              "    Titel "
+            ],
+            "lineageTag": "6d137b33-7a64-4063-afc0-6612ef3fec21"
+          },
+          {
+            "name": "Grafiek PoP Vergelijking",
+            "displayFolder": "Overig",
+            "expression": [
+              "",
+              "",
+              "VAR SelectedPoP = SELECTEDVALUE('Selector: Period-over-Period'[Selector: Period-over-Period Fields])",
+              "VAR Titel = ",
+              "SWITCH(",
+              "    TRUE(),",
+              "    SelectedPoP = \"'Measurements'[Afval verzamelt]\", \"Afval verzamelt - Vorig jaar vs. Huidig jaar\",",
+              "    SelectedPoP = \"'Measurements'[Afval per km]\", \"Afval per km - Vorig jaar vs. Huidig jaar\"",
+              ")",
+              "",
+              "RETURN",
+              "    Titel"
+            ],
+            "lineageTag": "41836d0d-f821-44d5-be6c-96c1766104b3"
+          },
+          {
+            "name": "Dashboard Titel",
+            "displayFolder": "Titels",
+            "expression": [
+              "",
+              "VAR JaarFiltered = SELECTEDVALUE(Jaar[Year])",
+              "VAR Gemeente = SELECTEDVALUE(Gemeenten[Gemeente])",
+              "VAR Titel = \"Dashboard Zwerfinator \" & JaarFiltered & \" \" & Gemeente",
+              "",
+              "RETURN",
+              "    Titel"
+            ],
+            "lineageTag": "da9cc711-1b2e-4ace-ba81-a32c370321ce"
+          },
+          {
+            "name": "Waarschuwing Icoon",
+            "displayFolder": "Overig",
+            "expression": "\"！\"",
+            "lineageTag": "bcbe7a83-2ff2-4ccc-a280-897239697f48"
           }
         ],
-        "lineageTag": "39f59d46-a316-4d5d-943a-a6d33fa1058b",
         "partitions": [
           {
-            "name": "Gewichten",
+            "name": "Measurements",
             "mode": "import",
-            "queryGroup": "Facts",
             "source": {
               "expression": [
                 "let",
-                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
-                "    Gewichten_Sheet = Source{[Item=\"Gewichten\",Kind=\"Sheet\"]}[Data],",
-                "    #\"Promoted Headers\" = Table.PromoteHeaders(Gewichten_Sheet, [PromoteAllScalars=true]),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Jaar\", Int64.Type}, {\"Wijk\", type text}, {\"Soort\", type text}, {\"Gewicht\", Int64.Type}, {\"Tussengroep\", type text}, {\"Hoofdgroep\", type text}})",
+                "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Column1\", type text}}),",
+                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Column1\"})",
                 "in",
-                "    #\"Changed Type\""
+                "    #\"Removed Columns\""
               ],
               "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Alle Jaren Kalendar",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "68a11f1e31ba4d409c9397512cfde953"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "User"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "7c5bb83a-ee81-4eda-b6ca-3565b2f70d38",
+            "sourceColumn": "Jaar[Year]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "32a26c4b-99ef-40f5-bd4e-cff3934ea12c",
+        "partitions": [
+          {
+            "name": "Alle Jaren Kalendar",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "",
+                "SUMMARIZE(",
+                "    'Jaar',",
+                "    'Jaar'[Year]      ",
+                ")"
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Selector: Calculatie",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "09d248d2651a4e0594442c2290d78df1"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Calculation Parameter",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "isNameInferred": false,
+            "lineageTag": "7e7d5cb5-7b43-4e1e-a36a-dd32a45482f5",
+            "relatedColumnDetails": {
+              "groupByColumns": [
+                {
+                  "groupingColumn": "Calculation Parameter Fields"
+                }
+              ]
+            },
+            "sortByColumn": "Calculation Parameter Order",
+            "sourceColumn": "[Value1]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Calculation Parameter Fields",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "extendedProperties": [
+              {
+                "name": "ParameterMetadata",
+                "type": "json",
+                "value": {
+                  "kind": 2,
+                  "version": 3
+                }
+              }
+            ],
+            "isDataTypeInferred": true,
+            "isNameInferred": false,
+            "lineageTag": "8f50b864-0e9b-4e45-8a0b-12cc73d12343",
+            "sortByColumn": "Calculation Parameter Order",
+            "sourceColumn": "[Value2]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Calculation Parameter Order",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "56edb778-a437-446c-9edb-de8ece7a2624",
+            "sourceColumn": "[Value3]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "bc15b2b7-10c3-4889-ada4-8f2fe5e22316",
+        "partitions": [
+          {
+            "name": "Selector: Calculatie",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "{",
+                "    (\"Verzamelt\", NAMEOF('Measurements'[Afval verzamelt]), 0),",
+                "    (\"Verzamelt YoY\", NAMEOF('Measurements'[Afval verzamelt YoY]), 1),",
+                "    (\"Verzamelt YoY %\", NAMEOF('Measurements'[Afval verzamelt YoY %]), 2),",
+                "    (\"Afval per Meter\", NAMEOF('Measurements'[Afval per km]), 3),",
+                "    (\"Afval per Meter YoY\", NAMEOF('Measurements'[Afval per km YoY]), 4), ",
+                "    (\"Afval per Meter YoY %\", NAMEOF('Measurements'[Afval per km YoY %]), 5) ",
+                "}"
+              ],
+              "type": "calculated"
             }
           }
         ]
@@ -602,7 +1100,7 @@
             ],
             "dataType": "string",
             "isHidden": true,
-            "lineageTag": "1652cce2-e5d4-46ce-9dfe-7f261241f9bf",
+            "lineageTag": "d7db24d8-b738-4bd1-88e2-7071d21cdb89",
             "sourceColumn": "Sleutel_Soort_Grondstof_Type",
             "summarizeBy": "none"
           },
@@ -615,7 +1113,7 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "cb323454-dcb7-49e5-996d-f202aa60d0e8",
+            "lineageTag": "2c9d9944-5f65-43e4-aa62-7276868b64ba",
             "sourceColumn": "Type",
             "summarizeBy": "none"
           },
@@ -628,7 +1126,7 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "b81091c8-0fe9-4d8a-85f2-07a708e012fd",
+            "lineageTag": "6bfe7875-7466-41a1-a507-09d8cae5e827",
             "sourceColumn": "Type1",
             "summarizeBy": "none"
           },
@@ -641,16 +1139,17 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "ad57cf52-e092-4b98-a708-d7f38b974827",
+            "lineageTag": "828cd963-7bf6-4476-a0b7-bf2da0a6441c",
             "sourceColumn": "Type2",
             "summarizeBy": "none"
           }
         ],
-        "lineageTag": "d3f6ce8f-c93f-483e-8c81-3349437c30f6",
+        "lineageTag": "0da367f1-3b4b-4697-8e76-64f07d933fe3",
         "partitions": [
           {
             "name": "Type",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
                 "let",
@@ -658,9 +1157,10 @@
                 "    Type_Sheet = Source{[Item=\"Type\",Kind=\"Sheet\"]}[Data],",
                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Type_Sheet, [PromoteAllScalars=true]),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Type\", type text}, {\"Type1\", type text}, {\"Type2\", type text}, {\"Sleutel_Soort_Grondstof_Type\", type text}, {\"Aantal rijen\", Int64.Type}}),",
-                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Changed Type\",{\"Sleutel_Soort_Grondstof_Type\", \"Type\", \"Type1\", \"Type2\"})",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Changed Type\",{\"Sleutel_Soort_Grondstof_Type\", \"Type\", \"Type1\", \"Type2\"}),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Removed Other Columns\",\"Ijs\",\"IJs\",Replacer.ReplaceText,{\"Type1\"})",
                 "in",
-                "    #\"Removed Other Columns\""
+                "    #\"Replaced Value\""
               ],
               "type": "m"
             }
@@ -668,15 +1168,20 @@
         ]
       },
       {
-        "name": "Spec",
+        "name": "Specificatie",
         "annotations": [
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
           {
             "name": "PBI_ResultType",
             "value": "Table"
+          },
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          }
+        ],
+        "changedProperties": [
+          {
+            "property": "Name"
           }
         ],
         "columns": [
@@ -695,7 +1200,7 @@
             ],
             "dataType": "string",
             "isHidden": true,
-            "lineageTag": "2647d10d-5315-44c3-b6fb-4a8dd7bfeea0",
+            "lineageTag": "dee4fcc2-26bb-4560-83c6-87c56ed83fcf",
             "sourceColumn": "Sleutel_Soort_Grondstof",
             "summarizeBy": "none"
           },
@@ -708,16 +1213,17 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "ebbf8019-c0ae-4933-82f6-8f6ab7647d99",
+            "lineageTag": "ddd890d2-7386-4621-942f-46c886c03588",
             "sourceColumn": "Specificatie",
             "summarizeBy": "none"
           }
         ],
-        "lineageTag": "fee802cb-0a00-43f3-84f5-8739a0ab0ea7",
+        "lineageTag": "46bd3c69-c884-4ca8-b4d1-6b781e914b74",
         "partitions": [
           {
-            "name": "Spec",
+            "name": "Specificatie",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
                 "let",
@@ -726,9 +1232,10 @@
                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Spec_Sheet, [PromoteAllScalars=true]),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Specificatie\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Aantal rijen\", Int64.Type}}),",
                 "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Soort\", \"Grondstof\", \"Aantal rijen\"}),",
-                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Columns\",{\"Sleutel_Soort_Grondstof\", \"Specificatie\"})",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Removed Columns\",{\"Sleutel_Soort_Grondstof\", \"Specificatie\"}),",
+                "    #\"Capitalized Each Word\" = Table.TransformColumns(#\"Reordered Columns\",{{\"Specificatie\", Text.Proper, type text}})",
                 "in",
-                "    #\"Reordered Columns\""
+                "    #\"Capitalized Each Word\""
               ],
               "type": "m"
             }
@@ -739,12 +1246,17 @@
         "name": "Groep",
         "annotations": [
           {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
-          {
             "name": "PBI_ResultType",
             "value": "Table"
+          },
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          }
+        ],
+        "changedProperties": [
+          {
+            "property": "Name"
           }
         ],
         "columns": [
@@ -763,7 +1275,7 @@
             ],
             "dataType": "string",
             "isHidden": true,
-            "lineageTag": "fef9b63a-7442-401c-9b83-9fc55403d89f",
+            "lineageTag": "18bbc7cb-b938-4955-bff1-dbfd2fa73da9",
             "sourceColumn": "Sleutel_Soort_Grondstof",
             "summarizeBy": "none"
           },
@@ -776,7 +1288,7 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "bda76a01-748a-408c-acb5-8d6cb37790b5",
+            "lineageTag": "dc0959f3-3b02-4c9b-8b34-926980646de5",
             "sourceColumn": "Supergroep",
             "summarizeBy": "none"
           },
@@ -789,16 +1301,37 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "b98e4b54-6811-435a-9e7e-4f0413f13e35",
+            "lineageTag": "befb1ef7-d3ca-45a1-bff2-439a7fe1ed02",
             "sourceColumn": "Groep",
             "summarizeBy": "none"
           }
         ],
-        "lineageTag": "44143e30-e820-41ed-876c-7a7912f30ec1",
+        "hierarchies": [
+          {
+            "name": "Supergroep Hierarchy",
+            "levels": [
+              {
+                "name": "Supergroep",
+                "column": "Supergroep",
+                "lineageTag": "8fca3cd7-8308-4b28-84d9-08276db79635",
+                "ordinal": 0
+              },
+              {
+                "name": "Groep",
+                "column": "Groep",
+                "lineageTag": "0e4cd412-6950-43bd-9cb6-733e061436aa",
+                "ordinal": 1
+              }
+            ],
+            "lineageTag": "5876f465-8618-4ff0-a721-aa807ee83b6c"
+          }
+        ],
+        "lineageTag": "9f4b7789-4882-4b66-9ad8-e305667320bd",
         "partitions": [
           {
             "name": "Groep",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
                 "let",
@@ -806,9 +1339,10 @@
                 "    Groep_Sheet = Source{[Item=\"Groep\",Kind=\"Sheet\"]}[Data],",
                 "    #\"Promoted Headers\" = Table.PromoteHeaders(Groep_Sheet, [PromoteAllScalars=true]),",
                 "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Promoted Headers\",{{\"Soort\", type text}, {\"Grondstof\", type text}, {\"Groep\", type text}, {\"Supergroep\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Aantal rijen\", Int64.Type}}),",
-                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Changed Type\",{\"Sleutel_Soort_Grondstof\", \"Supergroep\", \"Groep\"})",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Changed Type\",{\"Sleutel_Soort_Grondstof\", \"Supergroep\", \"Groep\"}),",
+                "    #\"Capitalized Each Word\" = Table.TransformColumns(#\"Removed Other Columns\",{{\"Supergroep\", Text.Proper, type text}, {\"Groep\", Text.Proper, type text}})",
                 "in",
-                "    #\"Removed Other Columns\""
+                "    #\"Capitalized Each Word\""
               ],
               "type": "m"
             }
@@ -818,10 +1352,6 @@
       {
         "name": "Grondstof",
         "annotations": [
-          {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
           {
             "name": "PBI_ResultType",
             "value": "Table"
@@ -843,7 +1373,7 @@
             ],
             "dataType": "string",
             "isHidden": true,
-            "lineageTag": "c2aaed1e-c6e0-4934-afa5-fd3f5e996776",
+            "lineageTag": "4729829e-a1e6-4697-be4f-0a0a039184a0",
             "sourceColumn": "Sleutel_Soort_Grondstof",
             "summarizeBy": "none"
           },
@@ -856,7 +1386,7 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "d18326af-3f71-46a0-8bf9-1cb0c15c4a84",
+            "lineageTag": "93a28bfa-15e3-47a3-8eb0-1703466b5d46",
             "sourceColumn": "Grondstof",
             "summarizeBy": "none"
           },
@@ -869,16 +1399,37 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "f1de579e-df0f-42ba-858a-747a3c520696",
+            "lineageTag": "34025e7d-7cbc-4c2b-ae2a-5040c038de8b",
             "sourceColumn": "Soort",
             "summarizeBy": "none"
           }
         ],
-        "lineageTag": "72840475-cca6-43b7-9ae5-562c06c14225",
+        "hierarchies": [
+          {
+            "name": "Grondstof Hierarchy",
+            "levels": [
+              {
+                "name": "Grondstof",
+                "column": "Grondstof",
+                "lineageTag": "9c86cc37-e166-4e79-affe-4e9c6fec3068",
+                "ordinal": 0
+              },
+              {
+                "name": "Soort",
+                "column": "Soort",
+                "lineageTag": "9f4e1856-7161-424c-a58e-984ffb368fd5",
+                "ordinal": 1
+              }
+            ],
+            "lineageTag": "85141909-3c99-404c-bc02-3c29173c28e0"
+          }
+        ],
+        "lineageTag": "ef47450f-38a3-4dcb-84de-3d8816efdf50",
         "partitions": [
           {
             "name": "Grondstof",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
                 "let",
@@ -900,12 +1451,12 @@
         "name": "Merken",
         "annotations": [
           {
-            "name": "PBI_NavigationStepName",
-            "value": "Navigation"
-          },
-          {
             "name": "PBI_ResultType",
             "value": "Table"
+          },
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
           }
         ],
         "columns": [
@@ -924,7 +1475,7 @@
             ],
             "dataType": "string",
             "isHidden": true,
-            "lineageTag": "3f8921bd-c31e-4141-87be-5c1f4b81f35e",
+            "lineageTag": "bcf953b3-cdf3-4039-99c0-baca0dda269f",
             "sourceColumn": "Sleutel_Merk",
             "summarizeBy": "none"
           },
@@ -937,7 +1488,7 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "bb67d94c-b909-4f08-95b2-5c580ce874b0",
+            "lineageTag": "43d68012-8679-47f6-b83c-6fa8f73f32f3",
             "sourceColumn": "Bedrijf",
             "summarizeBy": "none"
           },
@@ -950,7 +1501,7 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "26d0ba00-1a1a-4f0c-990a-f9d8752f3f1a",
+            "lineageTag": "4900ebb6-d8ae-409e-a89c-3f66725b3969",
             "sourceColumn": "Merk",
             "summarizeBy": "none"
           },
@@ -963,16 +1514,17 @@
               }
             ],
             "dataType": "string",
-            "lineageTag": "89b10db8-12bb-4549-a10b-a142e69c1831",
+            "lineageTag": "e434c346-a9ba-4296-b965-56f9ee97fee9",
             "sourceColumn": "Label",
             "summarizeBy": "none"
           }
         ],
-        "lineageTag": "e11c9b6a-eb97-407d-9937-62252d806e05",
+        "lineageTag": "d896806e-a125-48ad-8764-2c842b1efa09",
         "partitions": [
           {
             "name": "Merken",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
                 "let",
@@ -991,11 +1543,13 @@
                 "    #\"Replaced Value4\" = Table.ReplaceValue(#\"Replaced Value2\",\".\",\"\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
                 "    #\"Replaced Value3\" = Table.ReplaceValue(#\"Replaced Value4\",\"ü\",\"u\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
                 "    #\"Replaced Value5\" = Table.ReplaceValue(#\"Replaced Value3\",\"-\",\"\",Replacer.ReplaceText,{\"Sleutel_Merk\"}),",
-                "    #\"Appended Query\" = Table.Combine({#\"Replaced Value5\", #\"Merken Toevoeging\"}),",
-                "    #\"Sorted Rows\" = Table.Sort(#\"Appended Query\",{{\"Merk\", Order.Ascending}}),",
-                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Sorted Rows\",{\"Sleutel_Merk\", \"Bedrijf\", \"Merk\", \"Label\"})",
+                "    #\"Appended Query\" = Table.Combine({#\"Replaced Value5\", #\"Handmatige toevoeging merken\"}),",
+                "    #\"Capitalized Each Word\" = Table.TransformColumns(#\"Appended Query\",{{\"Merk\", Text.Proper, type text}, {\"Bedrijf\", Text.Proper, type text}, {\"Label\", Text.Proper, type text}}),",
+                "    #\"Sorted Rows\" = Table.Sort(#\"Capitalized Each Word\",{{\"Merk\", Order.Ascending}}),",
+                "    #\"Reordered Columns\" = Table.ReorderColumns(#\"Sorted Rows\",{\"Sleutel_Merk\", \"Bedrijf\", \"Merk\", \"Label\"}),",
+                "    #\"Replaced Value6\" = Table.ReplaceValue(#\"Reordered Columns\",\"-\",\"Onbekend\",Replacer.ReplaceText,{\"Bedrijf\"})",
                 "in",
-                "    #\"Reordered Columns\""
+                "    #\"Replaced Value6\""
               ],
               "type": "m"
             }
@@ -1003,32 +1557,782 @@
         ]
       },
       {
-        "name": "Kalender",
+        "name": "Selector: Wijk / Buurt",
         "annotations": [
           {
             "name": "PBI_Id",
-            "value": "10f09339358c4c6195b0b0dd115496fb"
+            "value": "5c02273701b24af690f4c71b9fd64c01"
           }
         ],
         "columns": [
           {
-            "name": "Datum",
+            "name": "Switch: District / Neighborhood",
             "annotations": [
               {
                 "name": "SummarizationSetBy",
                 "value": "Automatic"
               }
             ],
-            "dataType": "dateTime",
-            "formatString": "General Date",
+            "dataType": "string",
             "isDataTypeInferred": true,
-            "isKey": true,
             "isNameInferred": false,
-            "lineageTag": "f90d6023-b9e2-4810-8a94-06eadbee3a20",
-            "sourceColumn": "[Date]",
+            "lineageTag": "17fb2808-b504-4d8a-9646-d6849e27e65c",
+            "relatedColumnDetails": {
+              "groupByColumns": [
+                {
+                  "groupingColumn": "Switch: District / Neighborhood Fields"
+                }
+              ]
+            },
+            "sortByColumn": "Switch: District / Neighborhood Order",
+            "sourceColumn": "[Value1]",
             "summarizeBy": "none",
             "type": "calculatedTableColumn"
           },
+          {
+            "name": "Switch: District / Neighborhood Fields",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "extendedProperties": [
+              {
+                "name": "ParameterMetadata",
+                "type": "json",
+                "value": {
+                  "kind": 2,
+                  "version": 3
+                }
+              }
+            ],
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "2b17a8a7-6048-4000-8950-c5e511ab81d5",
+            "sortByColumn": "Switch: District / Neighborhood Order",
+            "sourceColumn": "[Value2]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Switch: District / Neighborhood Order",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "3dd39e25-9be5-4757-a1a6-15d1b5d8111f",
+            "sourceColumn": "[Value3]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "b5ebfe95-3040-47e1-aa6d-5fa6c5c45207",
+        "partitions": [
+          {
+            "name": "Selector: Wijk / Buurt",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "{",
+                "    (\"Wijk\", NAMEOF('Wijken'[statcode]), 0),",
+                "    (\"Buurt\", NAMEOF('Buurten'[statcode]), 1)",
+                "}"
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Kerncijfers Tabel",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "f07eb81375374050b54b173d0cf093f2"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Index",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "fdbd9e6c-413c-49d2-8fc6-cba576f39e45",
+            "sourceColumn": "[Index]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Periode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "isNameInferred": true,
+            "lineageTag": "a4c3ab4a-280e-4a1f-b340-bc16ad940266",
+            "sortByColumn": "Index",
+            "sourceColumn": "[Periode]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "d1038c8b-7bcf-4350-b7a8-ec2c98bad05a",
+        "measures": [
+          {
+            "name": "Locatie Tabel Measures",
+            "expression": [
+              "",
+              "VAR SelectedMeasureName = SELECTEDVALUE('Kerncijfers Tabel'[Periode])",
+              "VAR SelectedBuurtWijk   = SELECTEDVALUE('Selector: Wijk / Buurt'[Switch: District / Neighborhood Fields])",
+              "",
+              "VAR Oppervlakte  = ",
+              "    SWITCH(",
+              "        TRUE(),",
+              "        SelectedBuurtWijk = \"'Wijken'[statcode]\", [Oppervlakte wijk m2],",
+              "        SelectedBuurtWijk = \"'Buurten'[statcode]\", [Oppervlakte buurt m2]",
+              "    )",
+              "",
+              "VAR Afvalm2 = ",
+              "    DIVIDE(",
+              "        [Aantal Runs All],",
+              "        Oppervlakte,",
+              "        0",
+              "    )",
+              "",
+              "RETURN",
+              "SWITCH (",
+              "    SelectedMeasureName,",
+              "    \"Oppervlakte m2\", Oppervlakte,",
+              "    \"Afval per m2\", Afvalm2, ",
+              "    \" \",0, ",
+              "    \"Aantal runs\", [Aantal Runs All],",
+              "    \"Afstand (km)\", [Afstand (km) All],",
+              "    \"Aantallen\", [Afval Verzamelt All],",
+              "    \"Afval per km\", [Afval per km All]",
+              "   ",
+              "   ",
+              ")"
+            ],
+            "formatString": "#,0.0",
+            "lineageTag": "741415cf-3fb3-4b3f-93f0-4051d6ae7270"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Kerncijfers Tabel",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "",
+                "DATATABLE (",
+                "    \"Index\", INTEGER,",
+                "    \"Periode\", STRING,",
+                "    {",
+                "        {1, \"Oppervlakte m2\"},",
+                "        {2, \"Afval per m2\"},",
+                "        {3, \" \"},",
+                "        {4, \"Aantal  runs\"},",
+                "        {5, \"Afstand (km)\"},",
+                "        {6, \"Aantallen\"},",
+                "        {7, \"Afval per km\"}",
+                "        -- Add more rows as needed",
+                "    }",
+                ")",
+                "",
+                ""
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Selector: Period-over-Period",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "ee498f9e740941b8ba0e98a4de29229b"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Pop CY",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "isNameInferred": false,
+            "lineageTag": "934d46fb-ea03-45b7-a57d-c182e8923515",
+            "relatedColumnDetails": {
+              "groupByColumns": [
+                {
+                  "groupingColumn": "Selector: Period-over-Period Fields"
+                }
+              ]
+            },
+            "sortByColumn": "Selector: Period-over-Period Order",
+            "sourceColumn": "[Value1]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Selector: Period-over-Period Fields",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "extendedProperties": [
+              {
+                "name": "ParameterMetadata",
+                "type": "json",
+                "value": {
+                  "kind": 2,
+                  "version": 3
+                }
+              }
+            ],
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "484b7efe-b0ff-479b-bc99-017a2cff1301",
+            "sortByColumn": "Selector: Period-over-Period Order",
+            "sourceColumn": "[Value2]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Selector: Period-over-Period Order",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "8de896d5-e507-4527-b975-f249c4a0b5d2",
+            "sourceColumn": "[Value3]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "dffce665-f606-4371-9d4f-72d8d879202a",
+        "measures": [
+          {
+            "name": "PoP LY",
+            "expression": [
+              "",
+              "VAR SelectedPoP = SELECTEDVALUE('Selector: Period-over-Period'[Selector: Period-over-Period Fields])",
+              "VAR Resultaat = ",
+              "SWITCH(",
+              "    TRUE(),",
+              "    SelectedPoP = \"'Measurements'[Afval verzamelt]\", 'Measurements'[Afval verzamelt LY],",
+              "    SelectedPoP = \"'Measurements'[Afval per km]\", 'Measurements'[Afval per km LY]",
+              "",
+              ")",
+              "",
+              "RETURN",
+              "    Resultaat"
+            ],
+            "formatString": "#,0.0",
+            "lineageTag": "ab4d6c0d-2870-4282-b42d-9c797ec11e5d"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Selector: Period-over-Period",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "{",
+                "    (\"Afval verzamelt Huidig jaar\", NAMEOF('Measurements'[Afval verzamelt]), 0),",
+                "    (\"Afval per km Huidig jaar\", NAMEOF('Measurements'[Afval per km]), 1)",
+                "}"
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CBS Wijken",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "27a49a58-4795-448f-9455-b37e00a3c20c",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Oppervlakte",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "3d8c358b-6e09-409a-98ba-1dca0c3a940a",
+            "sourceColumn": "Oppervlakte",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Oppervlakte Land",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "4809ae71-c8b0-4f19-a5ab-6b0a968610bd",
+            "sourceColumn": "Oppervlakte Land",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Oppervlakte Water",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "c2dbb6fe-fdd8-4f74-a1cf-68a675900a6a",
+            "sourceColumn": "Oppervlakte Water",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "997a804f-125d-400d-91fa-426505e9272c",
+        "partitions": [
+          {
+            "name": "CBS Wijken",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Python.Execute(\"import pandas as pd#(lf)import cbsodata#(lf)#(lf)wijkinfo = pd.DataFrame(cbsodata.get_data('83765NED'))#(lf)wijkinfo\"),",
+                "    wijkinfo1 = Source{[Name=\"wijkinfo\"]}[Value],",
+                "    #\"Filtered Rows\" = Table.SelectRows(wijkinfo1, each ([SoortRegio_2] = \"Wijk      \")),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Filtered Rows\",{\"Codering_3\", \"OppervlakteTotaal_99\", \"OppervlakteLand_100\", \"OppervlakteWater_101\"}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Removed Other Columns\",{{\"Codering_3\", \"statcode\"}, {\"OppervlakteTotaal_99\", \"Oppervlakte\"}, {\"OppervlakteLand_100\", \"Oppervlakte Land\"}, {\"OppervlakteWater_101\", \"Oppervlakte Water\"}})",
+                "in",
+                "    #\"Renamed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CBS Buurten",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "8be45304-ee7e-44df-927b-84aab16b4205",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Oppervlakte",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "c610d584-00d5-4b49-b33f-6da9915bfd7c",
+            "sourceColumn": "Oppervlakte",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Oppervlakte Land",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "2ba54b94-6e85-4d26-84c1-9729066c7bc8",
+            "sourceColumn": "Oppervlakte Land",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Oppervlakte Water",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "f9b490a8-9b32-4589-8741-32898df12336",
+            "sourceColumn": "Oppervlakte Water",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "90cce183-71fb-4125-ba3d-016be8dcc4be",
+        "partitions": [
+          {
+            "name": "CBS Buurten",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Python.Execute(\"import pandas as pd#(lf)import cbsodata#(lf)#(lf)wijkinfo = pd.DataFrame(cbsodata.get_data('83765NED'))#(lf)wijkinfo\"),",
+                "    wijkinfo1 = Source{[Name=\"wijkinfo\"]}[Value],",
+                "    #\"Filtered Rows\" = Table.SelectRows(wijkinfo1, each ([SoortRegio_2] = \"Buurt     \")),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Filtered Rows\",{\"Codering_3\", \"OppervlakteTotaal_99\", \"OppervlakteLand_100\", \"OppervlakteWater_101\"}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Removed Other Columns\",{{\"Codering_3\", \"statcode\"}, {\"OppervlakteTotaal_99\", \"Oppervlakte\"}, {\"OppervlakteLand_100\", \"Oppervlakte Land\"}, {\"OppervlakteWater_101\", \"Oppervlakte Water\"}})",
+                "in",
+                "    #\"Renamed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "CBS Gemeenten",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "e563c08a-67fb-446f-a688-ca343b5d05e3",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Oppervlakte",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "890def87-be1b-4b25-ac41-5f1419edf3ea",
+            "sourceColumn": "Oppervlakte",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Oppervlakte Land",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "e9ed4258-94a9-42b0-8225-335d9a73e97c",
+            "sourceColumn": "Oppervlakte Land",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Oppervlakte Water",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "DataType"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "7a089055-fe26-4e8b-b54c-b682c76a9147",
+            "sourceColumn": "Oppervlakte Water",
+            "summarizeBy": "sum"
+          }
+        ],
+        "lineageTag": "a47f13ec-ce48-4e60-9b8c-b2b4b4952787",
+        "partitions": [
+          {
+            "name": "CBS Gemeenten",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Python.Execute(\"import pandas as pd#(lf)import cbsodata#(lf)#(lf)wijkinfo = pd.DataFrame(cbsodata.get_data('83765NED'))#(lf)wijkinfo\"),",
+                "    wijkinfo1 = Source{[Name=\"wijkinfo\"]}[Value],",
+                "    #\"Filtered Rows\" = Table.SelectRows(wijkinfo1, each ([SoortRegio_2] = \"Gemeente  \")),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Filtered Rows\",{\"Codering_3\", \"OppervlakteTotaal_99\", \"OppervlakteLand_100\", \"OppervlakteWater_101\"}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Removed Other Columns\",{{\"Codering_3\", \"statcode\"}, {\"OppervlakteTotaal_99\", \"Oppervlakte\"}, {\"OppervlakteLand_100\", \"Oppervlakte Land\"}, {\"OppervlakteWater_101\", \"Oppervlakte Water\"}})",
+                "in",
+                "    #\"Renamed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Selector: Type/Specificatie",
+        "annotations": [
+          {
+            "name": "PBI_Id",
+            "value": "46433495b27d4216b4a276675b8d2601"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Selector: Type/Specificatie",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "isDataTypeInferred": true,
+            "isNameInferred": false,
+            "lineageTag": "c007f5f3-9fcf-4d8f-99eb-536c4e8dbe35",
+            "relatedColumnDetails": {
+              "groupByColumns": [
+                {
+                  "groupingColumn": "Selector: Type/Specificatie Fields"
+                }
+              ]
+            },
+            "sortByColumn": "Selector: Type/Specificatie Order",
+            "sourceColumn": "[Value1]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Selector: Type/Specificatie Fields",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "extendedProperties": [
+              {
+                "name": "ParameterMetadata",
+                "type": "json",
+                "value": {
+                  "kind": 2,
+                  "version": 3
+                }
+              }
+            ],
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "4141a80c-cb14-4f78-a393-cbd84fec533a",
+            "sortByColumn": "Selector: Type/Specificatie Order",
+            "sourceColumn": "[Value2]",
+            "summarizeBy": "none",
+            "type": "calculatedTableColumn"
+          },
+          {
+            "name": "Selector: Type/Specificatie Order",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "isNameInferred": false,
+            "lineageTag": "d17fb0c7-5f46-4154-ac66-f9e05aa38938",
+            "sourceColumn": "[Value3]",
+            "summarizeBy": "sum",
+            "type": "calculatedTableColumn"
+          }
+        ],
+        "lineageTag": "36a8babf-453f-4298-bcaf-f2c716860aa0",
+        "partitions": [
+          {
+            "name": "Selector: Type/Specificatie",
+            "mode": "import",
+            "source": {
+              "expression": [
+                "{",
+                "    (\"Specificatie\", NAMEOF('Specificatie'[Specificatie]), 0),",
+                "    (\"Type2\", NAMEOF('Type'[Type2]), 1),",
+                "    (\"Type1\", NAMEOF('Type'[Type1]), 2),",
+                "    (\"Type\", NAMEOF('Type'[Type]), 3)",
+                "}"
+              ],
+              "type": "calculated"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Data",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
           {
             "name": "Jaar",
             "annotations": [
@@ -1039,12 +2343,266 @@
             ],
             "dataType": "int64",
             "formatString": "0",
-            "isDataTypeInferred": true,
-            "isNameInferred": true,
-            "lineageTag": "de945696-8890-40f4-88e6-4ce34fa1866a",
-            "sourceColumn": "[Jaar]",
-            "summarizeBy": "none",
-            "type": "calculatedTableColumn"
+            "lineageTag": "ec08c29d-a801-4b5b-a77b-289c03cc6922",
+            "sourceColumn": "Jaar",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Gebied",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "603f03b9-cd77-43fd-9103-fa56bd82d66e",
+            "sourceColumn": "Gebied",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Datum",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "lineageTag": "a654ed0c-b70b-4005-958d-29ac45d5c8fe",
+            "sourceColumn": "Datum",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Tijd",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Time"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Time",
+            "lineageTag": "f4b43bb7-65c6-4f0f-95c9-f869d9ea495b",
+            "sourceColumn": "Tijd",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "latitude",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "d4b94f53-2864-45b6-bedb-f3734e36f103",
+            "sourceColumn": "latitude",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Longitude",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "0f8ef459-a7d8-4e4b-9193-ffdef8c6629b",
+            "sourceColumn": "Longitude",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Merk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "fef6054d-ee0d-4f5b-9cc1-efbdab61f465",
+            "sourceColumn": "Sleutel_Merk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Soort_Grondstof",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "1ca7c61f-5c89-45e9-acd2-773626fc3406",
+            "sourceColumn": "Sleutel_Soort_Grondstof",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Jaar_Wijk_Run",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "2ce4dce9-2103-46d0-b3cb-5521b0d5878f",
+            "sourceColumn": "Sleutel_Jaar_Wijk_Run",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Sleutel_Soort_Grondstof_Type",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "31fbaac6-846a-47f9-8d9f-b64c3edc9fa7",
+            "sourceColumn": "Sleutel_Soort_Grondstof_Type",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "5c7037d9-d5ab-4c00-80d7-b1ad2a0fdfc9",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "5ade6040-ddf6-4fee-9bd9-9b6eab5e4fec",
+        "partitions": [
+          {
+            "name": "Data",
+            "mode": "import",
+            "queryGroup": "Facts",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Excel.Workbook(File.Contents(\"C:\\Users\\niels\\OneDrive\\7. Portfolio Data Analytics\\Challenges\\Innergy\\Zwerfinator\\dataset-zwerfinator-incl-sleutels.xlsx\"), null, true),",
+                "    Data_Sheet = Source{[Item=\"Data\",Kind=\"Sheet\"]}[Data],",
+                "    #\"Promoted Headers\" = Table.PromoteHeaders(Data_Sheet, [PromoteAllScalars=true]),",
+                "    #\"Rounded Off\" = Table.TransformColumns(#\"Promoted Headers\",{{\"Longitude\", each Number.Round(_, 14), type number}}),",
+                "    #\"Rounded Off1\" = Table.TransformColumns(#\"Rounded Off\",{{\"latitude\", each Number.Round(_, 13), type number}}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Rounded Off1\",{{\"Jaar\", Int64.Type}, {\"Gebied\", type text}, {\"Run\", Int64.Type}, {\"Datum\", type date}, {\"Tijd\", type time}, {\"latitude\", type text}, {\"Longitude\", type text}, {\"Merk\", type text}, {\"Sleutel_Soort_Grondstof\", type text}, {\"Sleutel_Jaar_Wijk_Run\", type text}, {\"Sleutel_Soort_Grondstof_Type\", type text}}),",
+                "    #\"Dimensie Kolommen verwijderd\" = Table.RemoveColumns(#\"Changed Type\",{\"Soort\", \"Grondstof\", \"Type\", \"Run\"}),",
+                "    #\"Kolom Merk naar Sleutel_Merk\" = Table.RenameColumns(#\"Dimensie Kolommen verwijderd\",{{\"Merk\", \"Sleutel_Merk\"}}),",
+                "    #\"Lowercased Sleutel_Merk\" = Table.TransformColumns(#\"Kolom Merk naar Sleutel_Merk\",{{\"Sleutel_Merk\", Text.Lower, type text}}),",
+                "    #\"Merged Queries\" = Table.NestedJoin(#\"Lowercased Sleutel_Merk\", {\"latitude\", \"Longitude\"}, #\"Neighbourhood Codes\", {\"latitude\", \"longitude\"}, \"Neighbourhood Codes\", JoinKind.LeftOuter),",
+                "    #\"Expanded Neighbourhood Codes\" = Table.ExpandTableColumn(#\"Merged Queries\", \"Neighbourhood Codes\", {\"statcode\"}, {\"statcode\"})",
+                "in",
+                "    #\"Expanded Neighbourhood Codes\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Kalender",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Date",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              },
+              {
+                "name": "UnderlyingDateTimeDataType",
+                "value": "Date"
+              }
+            ],
+            "dataType": "dateTime",
+            "formatString": "Long Date",
+            "lineageTag": "4adf4249-1272-4fdd-b3bb-a3a735d5f1b7",
+            "sourceColumn": "Date",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "85ed57ff-301d-41ea-81ed-0276ec26accf",
+            "sourceColumn": "Year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Maandnaam",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "670a5f41-4063-4e8b-ae9d-ec73bf3bf6cb",
+            "sourceColumn": "Maandnaam",
+            "summarizeBy": "none"
           },
           {
             "name": "Maand",
@@ -1054,17 +2612,14 @@
                 "value": "Automatic"
               }
             ],
-            "dataType": "string",
-            "isDataTypeInferred": true,
-            "isNameInferred": true,
-            "lineageTag": "7471b184-ce7b-41f3-9a2e-e1218382b5d2",
-            "sortByColumn": "Maand Nummer",
-            "sourceColumn": "[Maand]",
-            "summarizeBy": "none",
-            "type": "calculatedTableColumn"
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "1e56c38c-5eae-4c15-86af-bc1740e3ddac",
+            "sourceColumn": "Maand",
+            "summarizeBy": "sum"
           },
           {
-            "name": "Maand Nummer",
+            "name": "Kwartaal",
             "annotations": [
               {
                 "name": "SummarizationSetBy",
@@ -1073,78 +2628,377 @@
             ],
             "dataType": "int64",
             "formatString": "0",
-            "isDataTypeInferred": true,
-            "isNameInferred": true,
-            "lineageTag": "61e36a34-36d1-44df-8aed-e8f6e6694f3f",
-            "sourceColumn": "[Maand Nummer]",
-            "summarizeBy": "none",
-            "type": "calculatedTableColumn"
+            "lineageTag": "7fba3d25-ce9d-4983-8284-74280479483e",
+            "sourceColumn": "Kwartaal",
+            "summarizeBy": "sum"
+          },
+          {
+            "name": "Kwartaalnaam",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "fdebf013-8778-49c0-b2ec-7462cf9af434",
+            "sourceColumn": "Kwartaalnaam",
+            "summarizeBy": "none"
           }
         ],
-        "dataCategory": "Time",
-        "lineageTag": "9f337449-4ac4-4989-9968-044d3cc79c44",
+        "lineageTag": "0f2e0f5e-0279-4946-9a80-398401e08a5c",
         "partitions": [
           {
             "name": "Kalender",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
-                "",
-                "VAR MinDate = DATE( YEAR( MIN(Data[Datum])),1,1)",
-                "VAR MaxDate = LASTDATE(Data[Datum])",
-                "",
-                "RETURN",
-                "ADDCOLUMNS(",
-                "    FILTER(",
-                "        CALENDARAUTO(),",
-                "        [Date] >= MinDate &&",
-                "        [Date] <= MaxDate",
-                "    ),",
-                "    \"Jaar\", YEAR([date]),",
-                "    \"Maand Nummer\", MONTH([Date]),",
-                "    \"Maand\", FORMAT([Date], \"mmm\")",
-                "",
-                ")"
+                "let",
+                "    MinDate = List.Min(Data[Datum]),",
+                "    MaxDate = List.Max(Data[Datum]),",
+                "    DateList = List.Dates(MinDate, Duration.From(MaxDate - MinDate) / #duration(1, 0, 0, 0) + 1, #duration(1, 0, 0, 0)),",
+                "    #\"Converted to Table\" = Table.FromList(DateList, Splitter.SplitByNothing(), null, null, ExtraValues.Error),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Converted to Table\",{{\"Column1\", \"Date\"}}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Renamed Columns\",{{\"Date\", type date}}),",
+                "    #\"Inserted Year\" = Table.AddColumn(#\"Changed Type\", \"Year\", each Date.Year([Date]), Int64.Type),",
+                "    #\"Inserted Month Name\" = Table.AddColumn(#\"Inserted Year\", \"Month Name\", each Date.MonthName([Date]), type text),",
+                "    #\"Inserted Month\" = Table.AddColumn(#\"Inserted Month Name\", \"Month\", each Date.Month([Date]), Int64.Type),",
+                "    #\"Inserted Quarter\" = Table.AddColumn(#\"Inserted Month\", \"Quarter\", each Date.QuarterOfYear([Date]), Int64.Type),",
+                "    #\"Added custom Quarter\" = Table.AddColumn(#\"Inserted Quarter\", \"Kwartaalnaam\", each Text.From([Year]) & \"Q\" & Text.From([Quarter])),",
+                "    #\"Capitalized Each Word\" = Table.TransformColumns(#\"Added custom Quarter\",{{\"Month Name\", Text.Proper, type text}}),",
+                "    #\"Changed Type1\" = Table.TransformColumnTypes(#\"Capitalized Each Word\",{{\"Kwartaalnaam\", type text}}),",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Changed Type1\",{{\"Quarter\", \"Kwartaal\"}, {\"Month\", \"Maand\"}, {\"Month Name\", \"Maandnaam\"}}),",
+                "    #\"Sorted Rows\" = Table.Sort(#\"Renamed Columns1\",{{\"Date\", Order.Ascending}})",
+                "in",
+                "    #\"Sorted Rows\""
               ],
-              "type": "calculated"
+              "type": "m"
             }
           }
         ]
       },
       {
-        "name": "Measurements",
+        "name": "Jaar",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "Year",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "lineageTag": "254eaf51-5d9c-4440-a4c9-e18cef56d0df",
+            "sourceColumn": "Year",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Year_Index",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "int64",
+            "formatString": "0",
+            "isHidden": true,
+            "lineageTag": "85216651-4d17-4fcf-88d9-ff3d2d1ab46c",
+            "sourceColumn": "Year_Index",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "1e865c4e-9db1-4388-ac70-d850ee8e07a6",
+        "partitions": [
+          {
+            "name": "Jaar",
+            "mode": "import",
+            "queryGroup": "Dimensions",
+            "source": {
+              "expression": [
+                "let",
+                "    MinYear = Date.Year(List.Min(Data[Datum])),",
+                "    MaxYear = Date.Year(List.Max(Data[Datum])),",
+                "    YearList = {MinYear..MaxYear},",
+                "    #\"Converted to Table\" = Table.FromList(YearList, Splitter.SplitByNothing(), null, null, ExtraValues.Error),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Converted to Table\",{{\"Column1\", \"Year\"}}),",
+                "    #\"Sorted Rows\" = Table.Sort(#\"Renamed Columns\",{{\"Year\", Order.Ascending}}),",
+                "    #\"Added Index\" = Table.AddIndexColumn(#\"Sorted Rows\", \"Year_Index\", 1, 1, Int64.Type),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Added Index\",{{\"Year\", Int64.Type}})",
+                "in",
+                "    #\"Changed Type\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Gemeenten",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "d46462cb-c065-485d-8d2d-d42a2bd37311",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Gemeente",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "97059871-666c-400c-91ac-6da59db14407",
+            "sourceColumn": "Gemeente",
+            "summarizeBy": "none"
+          }
+        ],
+        "excludeFromModelRefresh": true,
+        "lineageTag": "6ca2f62f-2b8c-42a2-a741-70eecfc1016a",
+        "partitions": [
+          {
+            "name": "Gemeenten",
+            "mode": "import",
+            "queryGroup": "Dimensions",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Python.Execute(\"import geopandas as gpd#(lf)import pandas as pd#(lf)import requests#(lf)#(lf)# Pagination identificators#(lf)count = 1000#(lf)startindex = 0#(lf)#(lf)# Initiliazing empty GeoPandas DataFrame to store the results#(lf)geodata = pd.DataFrame()#(lf)#(lf)# Making request and appending results in dataframe#(lf)while True:#(lf)    geojson_url = f'https://service.pdok.nl/cbs/gebiedsindelingen/2022/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=gemeente_gegeneraliseerd&outputFormat=json&count={count}&startIndex={startindex}&srsName=EPSG:4326'#(lf)    response = requests.get(geojson_url)#(lf)    #(lf)    if response.status_code == 200:#(lf)        data = response.json()#(lf)        features = data.get(\"\"features\"\", [])#(lf)       #(lf)        # Extract features#(lf)        gd_batch = gpd.GeoDataFrame.from_features(features)    #(lf)        #(lf)         # Convert the GeoPandas DataFrame to a Pandas DataFrame#(lf)        df_batch = pd.DataFrame(gd_batch)#(lf)#(lf)        # Append data to geodata #(lf)        geodata = pd.concat([geodata,df_batch], ignore_index=True)#(lf)#(lf)        # Check for latest response and break after#(lf)        if len(features) < count:          #(lf)            break#(lf)#(lf)        # Update the startIndex for the next request#(lf)        startindex += len(features)#(lf)    else:        #(lf)        break#(lf)#(lf)geodata\"),",
+                "    #\"Expanded Value\" = Table.ExpandTableColumn(Source, \"Value\", {\"geometry\", \"statcode\", \"jrstatcode\", \"statnaam\"}, {\"geometry\", \"statcode\", \"jrstatcode\", \"statnaam\"}),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Expanded Value\",{\"statcode\", \"statnaam\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Other Columns\", {\"statcode\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Duplicates\",{{\"statcode\", type text}, {\"statnaam\", type text}}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"statnaam\", \"Gemeente\"}})",
+                "in",
+                "    #\"Renamed Columns\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Wijken",
         "annotations": [
           {
             "name": "PBI_ResultType",
             "value": "Table"
           }
         ],
-        "changedProperties": [
+        "columns": [
           {
-            "property": "Name"
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "2ab9c87e-1c5e-4aea-90d7-fe3c2404bdbb",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Wijk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "05822729-62a4-4402-9416-d7d61248d344",
+            "sourceColumn": "Wijk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "statcode _gemeente",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "92cacf85-0fac-4ed1-a8b1-719acbc33972",
+            "sourceColumn": "statcode _gemeente",
+            "summarizeBy": "none"
           }
         ],
-        "lineageTag": "113f8e3a-fce4-471b-b1ab-e2f54475ef65",
-        "measures": [
-          {
-            "name": "Aantal Verzamelt",
-            "expression": "COUNTROWS(Data)",
-            "formatString": "0",
-            "lineageTag": "bf1dde1b-504b-4db8-b7ba-7aed0cb5db98"
-          }
-        ],
+        "lineageTag": "7a332ff8-0420-416f-9e51-9f84e94c47d3",
         "partitions": [
           {
-            "name": "Measurements",
+            "name": "Wijken",
             "mode": "import",
+            "queryGroup": "Dimensions",
             "source": {
               "expression": [
                 "let",
-                "    Source = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText(\"i44FAA==\", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Column1 = _t]),",
-                "    #\"Changed Type\" = Table.TransformColumnTypes(Source,{{\"Column1\", type text}}),",
-                "    #\"Removed Columns\" = Table.RemoveColumns(#\"Changed Type\",{\"Column1\"})",
+                "    Source = Python.Execute(\"import geopandas as gpd#(lf)import pandas as pd#(lf)import requests#(lf)#(lf)# Pagination identificators#(lf)count = 1000#(lf)startindex = 0#(lf)#(lf)# Initiliazing empty GeoPandas DataFrame to store the results#(lf)geodata = pd.DataFrame()#(lf)#(lf)# Making request and appending results in dataframe#(lf)while True:#(lf)    geojson_url = f'https://service.pdok.nl/cbs/gebiedsindelingen/2022/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=wijk_gegeneraliseerd&outputFormat=json&count={count}&startIndex={startindex}&srsName=EPSG:4326'#(lf)    response = requests.get(geojson_url)#(lf)    #(lf)    if response.status_code == 200:#(lf)        data = response.json()#(lf)        features = data.get(\"\"features\"\", [])#(lf)       #(lf)        # Extract features#(lf)        gd_batch = gpd.GeoDataFrame.from_features(features)    #(lf)        #(lf)         # Convert the GeoPandas DataFrame to a Pandas DataFrame#(lf)        df_batch = pd.DataFrame(gd_batch)#(lf)#(lf)        # Append data to geodata #(lf)        geodata = pd.concat([geodata,df_batch], ignore_index=True)#(lf)#(lf)        # Check for latest response and break after#(lf)        if len(features) < count:          #(lf)            break#(lf)#(lf)        # Update the startIndex for the next request#(lf)        startindex += len(features)#(lf)    else:        #(lf)        break#(lf)#(lf)geodata\"),",
+                "    #\"Expanded Value\" = Table.ExpandTableColumn(Source, \"Value\", {\"geometry\", \"statcode\", \"jrstatcode\", \"statnaam\"}, {\"geometry\", \"statcode\", \"jrstatcode\", \"statnaam\"}),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Expanded Value\",{\"statcode\", \"statnaam\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Other Columns\", {\"statcode\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Duplicates\",{{\"statcode\", type text}, {\"statnaam\", type text}}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Changed Type\",{{\"statnaam\", \"Wijk\"}}),",
+                "    #\"Duplicated Column\" = Table.DuplicateColumn(#\"Renamed Columns\", \"statcode\", \"statcode - Copy\"),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Duplicated Column\",\"WK\",\"GM\",Replacer.ReplaceText,{\"statcode - Copy\"}),",
+                "    #\"Extracted First Characters\" = Table.TransformColumns(#\"Replaced Value\", {{\"statcode - Copy\", each Text.Start(_, 6), type text}}),",
+                "    #\"Renamed Columns1\" = Table.RenameColumns(#\"Extracted First Characters\",{{\"statcode - Copy\", \"statcode _gemeente\"}})",
                 "in",
-                "    #\"Removed Columns\""
+                "    #\"Renamed Columns1\""
+              ],
+              "type": "m"
+            }
+          }
+        ]
+      },
+      {
+        "name": "Buurten",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ],
+        "columns": [
+          {
+            "name": "statcode",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "74067031-4f2a-42a3-a263-131d2e6a26d4",
+            "sourceColumn": "statcode",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Buurt",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "c987dd6f-e3e0-4966-a274-7b07d02d140a",
+            "sourceColumn": "Buurt",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "statcode_wijk",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "changedProperties": [
+              {
+                "property": "IsHidden"
+              }
+            ],
+            "dataType": "string",
+            "isHidden": true,
+            "lineageTag": "0fb6ba2f-60dd-4e7c-9d7f-3266557fdf2e",
+            "sourceColumn": "statcode_wijk",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "neighbourhoud_location",
+            "annotations": [
+              {
+                "name": "SummarizationSetBy",
+                "value": "Automatic"
+              }
+            ],
+            "dataType": "string",
+            "lineageTag": "84fac719-5f20-47b7-a3ac-334a957749dd",
+            "sourceColumn": "neighbourhoud_location",
+            "summarizeBy": "none"
+          }
+        ],
+        "lineageTag": "f9fd81e7-4f6b-4cfb-a9e2-66158a164d83",
+        "partitions": [
+          {
+            "name": "Buurten",
+            "mode": "import",
+            "queryGroup": "Dimensions",
+            "source": {
+              "expression": [
+                "let",
+                "    Source = Python.Execute(\"import geopandas as gpd#(lf)import pandas as pd#(lf)import requests#(lf)#(lf)# Pagination identificators#(lf)count = 1000#(lf)startindex = 0#(lf)#(lf)# Initiliazing empty GeoPandas DataFrame to store the results#(lf)geodata = pd.DataFrame()#(lf)#(lf)# Making request and appending results in dataframe#(lf)while True:#(lf)    geojson_url = f'https://service.pdok.nl/cbs/gebiedsindelingen/2022/wfs/v1_0?request=GetFeature&service=WFS&version=2.0.0&typeName=buurt_gegeneraliseerd&outputFormat=json&count={count}&startIndex={startindex}&srsName=EPSG:4326'#(lf)    response = requests.get(geojson_url)#(lf)    #(lf)    if response.status_code == 200:#(lf)        data = response.json()#(lf)        features = data.get(\"\"features\"\", [])#(lf)       #(lf)        # Extract features#(lf)        gd_batch = gpd.GeoDataFrame.from_features(features)    #(lf)        #(lf)         # Convert the GeoPandas DataFrame to a Pandas DataFrame#(lf)        df_batch = pd.DataFrame(gd_batch)#(lf)#(lf)        # Append data to geodata #(lf)        geodata = pd.concat([geodata,df_batch], ignore_index=True)#(lf)#(lf)        # Check for latest response and break after#(lf)        if len(features) < count:          #(lf)            break#(lf)#(lf)        # Update the startIndex for the next request#(lf)        startindex += len(features)#(lf)    else:        #(lf)        break#(lf)#(lf)geodata\"),",
+                "    #\"Expanded Value\" = Table.ExpandTableColumn(Source, \"Value\", {\"geometry\", \"statcode\", \"jrstatcode\", \"statnaam\"}, {\"geometry\", \"statcode\", \"jrstatcode\", \"statnaam\"}),",
+                "    #\"Removed Other Columns\" = Table.SelectColumns(#\"Expanded Value\",{\"statcode\", \"statnaam\"}),",
+                "    #\"Removed Duplicates\" = Table.Distinct(#\"Removed Other Columns\", {\"statcode\"}),",
+                "    #\"Changed Type\" = Table.TransformColumnTypes(#\"Removed Duplicates\",{{\"statcode\", type text}, {\"statnaam\", type text}}),",
+                "    #\"Duplicated Column\" = Table.DuplicateColumn(#\"Changed Type\", \"statcode\", \"districtcode\"),",
+                "    #\"Replaced Value\" = Table.ReplaceValue(#\"Duplicated Column\",\"BU\",\"WK\",Replacer.ReplaceText,{\"districtcode\"}),",
+                "    #\"Extracted First Characters\" = Table.TransformColumns(#\"Replaced Value\", {{\"districtcode\", each Text.Start(_, 8), type text}}),",
+                "    #\"Merged Queries\" = Table.NestedJoin(#\"Extracted First Characters\", {\"statcode\"}, #\"Neighbourhood Codes\", {\"statcode\"}, \"Neighbourhood Codes\", JoinKind.LeftOuter),",
+                "    #\"Expanded Neighbourhood Codes\" = Table.ExpandTableColumn(#\"Merged Queries\", \"Neighbourhood Codes\", {\"neighbourhoud_location\"}, {\"neighbourhoud_location\"}),",
+                "    #\"Filtered Rows\" = Table.SelectRows(#\"Expanded Neighbourhood Codes\", each ([neighbourhoud_location] <> null)),",
+                "    #\"Removed Duplicates1\" = Table.Distinct(#\"Filtered Rows\", {\"statcode\"}),",
+                "    #\"Renamed Columns\" = Table.RenameColumns(#\"Removed Duplicates1\",{{\"districtcode\", \"statcode_wijk\"}, {\"statnaam\", \"Buurt\"}})",
+                "in",
+                "    #\"Renamed Columns\""
               ],
               "type": "m"
             }

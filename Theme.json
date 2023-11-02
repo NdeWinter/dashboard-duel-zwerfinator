@@ -1,0 +1,28 @@
+{
+    "name": "Custom",
+    "dataColors": ["#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3", "#B3B3B3"],
+    "minimum": "#B3B3B3",
+    "center": "#B3B3B3",
+    "maximum": "#B3B3B3",
+    "textClasses": {
+        "callout": {
+            "color": "#B3B3B3",
+            "fontFace": "'Segoe UI Semibold', wf_segoe-ui_semibold, helvetica, arial, sans-serif"
+        }
+    },
+    "visualStyles": {
+        "*": {
+            "*": {
+                "legend": [
+                    {
+                        "color": {
+                            "solid": {
+                                "color": "#B3B3B3"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
